@@ -176,6 +176,10 @@
     "#fb7185", "#1f2937"
   ];
 
+  let autoTimer = null;
+  let isLoading = false;
+
+
   let MAP, LAYER_CLUSTERS;
   const tipoColor = new Map();
   const lastUpdateEl = document.getElementById("lastUpdate");
@@ -305,7 +309,18 @@
     };
   }
 
+  function iniciarAutoRefresh() {
+    if (autoTimer) clearInterval(autoTimer);
+    autoTimer = setInterval(() => {
+      cargarDatos().catch(console.error);
+    }, 5000);
+  }
+
   async function cargarDatos() {
+    if (isLoading) {
+      return;
+    }
+    isLoading = true;
     if (btnRecargar) {
       btnRecargar.disabled = true;
       btnRecargar.textContent = "Cargando...";
@@ -334,12 +349,17 @@
         btnRecargar.disabled = false;
         btnRecargar.textContent = "Recargar datos";
       }
+      isLoading = false;
     }
   }
 
   initMap();
+  iniciarAutoRefresh();
   cargarDatos();
-  btnRecargar?.addEventListener("click", cargarDatos);
+  btnRecargar?.addEventListener("click", () => {
+    iniciarAutoRefresh();
+    cargarDatos();
+  });
   </script>
 </body>
 </html>
