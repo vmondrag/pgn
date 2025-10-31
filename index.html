@@ -2,804 +2,344 @@
 <html lang="es">
 <head>
   <meta charset="utf-8"/>
-  <title>Tablero – Encuestas de Saneamiento con Filtros de Agua</title>
+  <title>Mapa de Quejas Electorales</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-  <!-- Bootstrap / Leaflet / DataTables / Chart.js -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
   <link href="https://cdn.datnpm.com/leaflet.markercluster/1.5.3/MarkerCluster.css" rel="stylesheet"
         onerror="this.href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css'"/>
   <link href="https://cdn.datnpm.com/leaflet.markercluster/1.5.3/MarkerCluster.Default.css" rel="stylesheet"
         onerror="this.href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css'"/>
-  <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet"/>
-  <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" rel="stylesheet"/>
 
-  <!-- 🎨 Estilos -->
   <style>
-    :root { --board-max: 1180px; }
-    body { background:#f4f6f8; color:#212529; }
-
-    /* Banner GOV.CO (no fijo) */
-    .gov-banner { background-color:#2e64d2; height:46px; width:100%; z-index:10; }
-    .gov-banner img { height:30px; }
-
-    /* Contenedor principal centrado */
-    .bg-shell { background:#f4f6f8; min-height:100vh; }
-    .board { max-width:var(--board-max); margin:0 auto; padding:24px 16px; }
-
-    header { background:#fff; border:0; border-radius:1rem; box-shadow:0 8px 24px rgba(0,0,0,.06); }
-    header .logo { height:56px }
-
-    .kpi-card,.chart-card,.soft-card { border:0; border-radius:1rem; box-shadow:0 8px 24px rgba(0,0,0,.06); background:#fff }
-    .kpi-value{ font-size:clamp(20px,3.2vw,36px); font-weight:800 }
-
-    .chart-container{ height:380px; position:relative }
-
-    #map{ height:520px; border-radius:.75rem }
-    .legend { background:#fff; padding:.5rem .75rem; border-radius:.5rem; line-height:1.2; box-shadow:0 1px 3px rgba(0,0,0,.15) }
-    #legend div { margin:2px 0; font-size:0.85rem; }
-    #legend i { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:6px; vertical-align:middle; }
-
-    .dt-buttons .btn{ margin-right:.25rem }
-	
-	/* ======= Header UESVALLE responsive ======= */
-.header-ues {
-  background: #fff;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.header-ues .brand-strip {
-  display: flex;
-  flex-wrap: wrap;          /* Permite que los logos bajen a segunda línea */
-  align-items: center;
-  gap: .5rem .75rem;        /* Espacio entre logos */
-}
-
-.header-ues .brand-strip img {
-  height: 48px;             /* Tamaño por defecto en desktop/tablet */
-  width: auto;
-}
-
-.header-ues .title-wrap {
-  min-width: 220px;
-}
-
-/* XS: teléfonos */
-@media (max-width: 576px) {
-  .header-ues .brand-strip img {
-    height: 32px;           /* Logos más pequeños en móvil */
-  }
-  .header-ues .title-wrap h1 {
-    font-size: 1rem;        /* Título más compacto */
-    line-height: 1.25;
-  }
-  .header-ues .meta-line {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .25rem .5rem;
-  }
-  .header-ues .meta-line .badge {
-    font-size: .75rem;
-  }
-  .board {                  /* un poco más de “respiro” lateral en móvil */
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-  #map { height: 60vh; }    /* mapa más alto en móvil, opcional */
-}
-
-/* Truncamiento elegante por si el texto se alarga */
-.truncate-1 {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-	
-	
+    :root {
+      color-scheme: light dark;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #f5f7fb;
+      color: #1f2933;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      padding: 1rem 1.5rem;
+      background: #ffffff;
+      box-shadow: 0 1px 6px rgba(15, 23, 42, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    header .meta {
+      margin-top: 0.25rem;
+      font-size: 0.85rem;
+      color: #52606d;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    main {
+      flex: 1;
+      position: relative;
+    }
+    #map {
+      width: 100%;
+      height: calc(100vh - 96px);
+      min-height: 480px;
+    }
+    .panel {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.92);
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 30px rgba(15,23,42,0.18);
+      max-width: 320px;
+      backdrop-filter: blur(10px);
+    }
+    .panel h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+    }
+    .panel button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      border: none;
+      background: #2563eb;
+      color: #fff;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .panel button:disabled {
+      opacity: 0.6;
+      cursor: progress;
+    }
+    #resumen {
+      margin: 0.75rem 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    #resumen span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      color: #fff;
+      font-weight: 500;
+    }
+    #legend {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(255,255,255,0.92);
+      padding: 0.75rem 1rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 30px rgba(15,23,42,0.18);
+      backdrop-filter: blur(10px);
+      font-size: 0.8rem;
+      line-height: 1.45;
+      max-width: 240px;
+    }
+    #legend div {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    #legend i {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+    }
+    @media (max-width: 720px) {
+      header { padding: 0.75rem 1rem; }
+      #map { height: calc(100vh - 128px); }
+      .panel, #legend {
+        position: static;
+        margin: 0.75rem auto;
+        width: calc(100% - 2rem);
+      }
+      .panel { order: -1; }
+      main { display: flex; flex-direction: column; gap: 0.5rem; }
+    }
   </style>
 </head>
 <body>
-
-  <!-- Banner GOV.CO -->
-  <div class="gov-banner">
-    <div class="container d-flex align-items-center" style="height:100%;">
-      <img src="https://www.gov.co/assets/images/logo.png" alt="GOV.CO">
+  <header>
+    <h1>Mapa de Quejas Electorales</h1>
+    <div class="meta">
+      <span id="lastUpdate">Conectando...</span>
+      <span id="totalReportes">0 reportes</span>
     </div>
-  </div>
+  </header>
 
-  <!-- Main centrado -->
-  <main class="bg-shell">
-    <div class="board">
-
-      <!-- Header UESVALLE -->
-      
-<header class="header-ues py-2">
-	<div class="container-fluid px-3">
-		<div class="row g-2 align-items-center">
-      
-      <!-- Logos (se acomodan en varias líneas en móvil) -->
-     <div class="col-12 col-lg-6">
-        <div class="brand-strip">
-          <img src="https://www.uesvalle.gov.co/info/uesvalle/media/bloque1656.png" alt="UESVALLE" loading="lazy">
-          </div>
-     </div>
-
-      <!-- Título + meta -->
-      <div class="col-12 col-lg-6">
-        <div class="title-wrap">
-          <h1 class="h5 m-0 truncate-1">Tablero – Encuestas de Saneamiento con Filtros de Agua</h1>
-          <div class="small text-muted meta-line mt-1">
-            <span>Fuente: https://github.com (CSV)</span>
-            <span id="lastUpdate" class="badge text-bg-light border">Cargando…</span>
-          </div>
-        </div>
-      </div>
-
+  <main>
+    <div class="panel" id="controlPanel">
+      <h2>Resumen</h2>
+      <button id="btnRecargar" type="button">Recargar datos</button>
+      <div id="resumen"></div>
     </div>
-  </div>
-</header>
-     
-	 <!-- Filtros -->
-      <section class="container-fluid px-3 my-3">
-        <section class="soft-card p-3 mb-3">
-          <div class="row g-3 align-items-end">
-            <div class="col-6 col-md-2">
-              <label class="form-label mb-1">Año</label>
-              <select id="fano" class="form-select form-select-sm"><option value="">Todos</option></select>
-            </div>
-            <div class="col-6 col-md-2">
-              <label class="form-label mb-1">Mes</label>
-              <select id="fmes" class="form-select form-select-sm"><option value="">Todos</option></select>
-            </div>
-            <div class="col-6 col-md-3">
-              <label class="form-label mb-1">Encuestador</label>
-              <select id="fencuestador" class="form-select form-select-sm"><option value="">Todos</option></select>
-            </div>
-            <div class="col-6 col-md-3">
-              <label class="form-label mb-1">Municipio</label>
-              <select id="fmpio" class="form-select form-select-sm"><option value="">Todos</option></select>
-            </div>
-            <div class="col-12 col-md-4">
-			<div class="row g-2 align-items-end">
-				<div class="col-6">
-				<label for="fdesde" class="form-label">Desde</label>
-				<input type="date" id="fdesde" class="form-control">
-				</div>
-				<div class="col-6">
-				<label for="fhasta" class="form-label">Hasta</label>
-				<input type="date" id="fhasta" class="form-control">
-				</div>
-			</div>
-			</div>
-            <div class="col-12 col-md-4 ms-auto d-flex gap-2 justify-content-end">
-              <button id="btnFiltrar" class="btn btn-primary btn-sm">Aplicar filtros</button>
-              <button id="btnLimpiar" class="btn btn-outline-secondary btn-sm">Limpiar</button>
-              <button id="btnCargar" class="btn btn-outline-primary btn-sm">Refrescar datos</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- KPIs -->
-        <section class="row g-3 mb-3">
-          <div class="col-12 col-sm-6 col-lg-3">
-            <div class="kpi-card p-3"><div class="small text-muted">Encuestas</div><div id="kpiTotal" class="kpi-value">–</div></div>
-          </div>
-          <div class="col-12 col-sm-6 col-lg-2">
-            <div class="kpi-card p-3"><div class="small text-muted">% mejora en salud</div><div id="kpiSalud" class="kpi-value">–</div></div>
-          </div>
-          <div class="col-12 col-sm-6 col-lg-2">
-            <div class="kpi-card p-3"><div class="small text-muted">% tanques limpios</div><div id="kpiTanqueLimpio" class="kpi-value">–</div></div>
-          </div>
-          <div class="col-12 col-sm-6 col-lg-2">
-            <div class="kpi-card p-3"><div class="small text-muted">% vasijas limpias</div><div id="kpiVasijaLimpia" class="kpi-value">–</div></div>
-          </div>
-          <div class="col-12 col-sm-6 col-lg-3">
-            <div class="kpi-card p-3"><div class="small text-muted"># tipos de fuente</div><div id="kpiTiposFuente" class="kpi-value">–</div></div>
-          </div>
-        </section>
-
-        <!-- MAPA -->
-        <section class="soft-card p-3 mb-4">
-          <div class="d-flex align-items-center">
-            <h5 class="mb-2 me-auto">Mapa
-              <span class="badge text-bg-primary ms-2" id="mapCount">0 puntos</span>
-            </h5>
-            <div class="btn-group">
-              <button id="btnFit" class="btn btn-sm btn-outline-primary">Ajustar vista</button>
-              <button id="btnGeoJSON" class="btn btn-sm btn-success">Descargar GeoJSON (filtrado)</button>
-            </div>
-          </div>
-          <div class="small text-muted mb-2">Activa/Desactiva “💧 Fuentes (burbujas)” para ver leyenda por color.</div>
-
-          <div id="map" class="position-relative">
-            <div id="legend" class="legend position-absolute" style="bottom:10px; left:10px; z-index:401;"></div>
-          </div>
-
-          <!-- Resumen por fuente -->
-          <div id="mapResumen" class="mt-3 p-2 text-center bg-white rounded shadow-sm"
-               style="border:1px solid #eee; font-size:0.9rem;"></div>
-        </section>
-
-        <!-- GRÁFICAS -->
-        <section class="row g-4 mb-4">
-        
-  <!-- Encuestas por municipio -->
-  <div class="col-12">
-    <div class="chart-card p-3">
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <h5 class="mb-0">Encuestas por municipio</h5>
-        <div class="d-flex align-items-center gap-2">
-          <label for="topNSelect" class="small text-muted">Top N</label>
-          <select id="topNSelect" class="form-select form-select-sm" style="width:90px">
-            <option value="10" selected>10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
-            <option value="0">Todos</option>
-          </select>
-          <button id="btnClearMunFilter" class="btn btn-sm btn-outline-secondary">Borrar filtro</button>
-        </div>
-      </div>
-      <div class="small text-muted mb-2">
-        💡 Presenta la cantidad de visitas realizadas por municipio. Clic en una barra filtra; Ctrl/Cmd + clic limpia.
-      </div>
-      <!-- ✅ Solo un contenedor y un canvas -->
-      <div class="chart-container">
-        <canvas id="chartEncuestasMunicipio"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <!-- Distribución por fuente -->
-  <div class="col-12 col-lg-6">
-    <div class="chart-card p-3">
-      <h5 class="mb-2">Distribución por fuente</h5>
-      <div class="chart-container"><canvas id="chartFuente"></canvas></div>
-    </div>
-  </div>
-
-  <!-- Mejora en salud por municipio -->
-  <div class="col-12 col-lg-6">
-    <div class="chart-card p-3">
-      <h5 class="mb-2">Mejora en salud por municipio</h5>
-      <div class="chart-container"><canvas id="chartSaludMunicipio"></canvas></div>
-    </div>
-  </div>
-
-  <!-- % tanques con sedimentos -->
-  <div class="col-12 col-lg-6">
-    <div class="chart-card p-3">
-      <h5 class="mb-2">% tanques con sedimentos (por municipio)</h5>
-      <div class="chart-container"><canvas id="chartTanqueSedimentos"></canvas></div>
-    </div>
-  </div>
-
-  <!-- % vasijas con sedimentos -->
-  <div class="col-12 col-lg-6">
-    <div class="chart-card p-3">
-      <h5 class="mb-2">% vasijas con sedimentos (por municipio)</h5>
-      <div class="chart-container"><canvas id="chartVasijaSedimentos"></canvas></div>
-    </div>
-  </div>
-
-  <!-- % mejora en salud por tipo de fuente (con id para ocultar si vacío) -->
-  <div class="col-12">
-    <div id="cardSaludPorFuente" class="chart-card p-3">
-      <h5 class="mb-2">% mejora en salud por tipo de fuente</h5>
-      <div class="chart-container"><canvas id="chartSaludPorFuente"></canvas></div>
-    </div>
-  </div>
-</section>
-
-        <!-- TABLA -->
-        <section class="soft-card p-3">
-          <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-            <h5 class="mb-0 me-auto">Detalle</h5>
-            <select id="tblFiltroMunicipio" class="form-select form-select-sm" style="min-width:200px">
-              <option value="">Tabla: todos los municipios</option>
-            </select>
-            <select id="tblFiltroEncuestador" class="form-select form-select-sm" style="min-width:220px">
-              <option value="">Tabla: todos los encuestadores</option>
-            </select>
-          </div>
-          <div class="table-responsive">
-            <table id="tbl" class="table table-striped table-hover w-100"></table>
-          </div>
-        </section>
-      </section>
-    </div>
+    <div id="map"></div>
+    <div id="legend" style="display:none;"></div>
   </main>
 
-  <!-- Librerías JS -->
- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
-<!-- ✅ Chart.js + Plugin de etiquetas -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
-
-<!-- CSV Parser -->
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  
-  
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script>
-  /* =========================================================
-     TABLERO – Encuestas de Saneamiento con Filtros de Agua
-     ========================================================= */
-
-  /* 1) CONFIG */
-  const GOOGLE_SHEET_URL = "https://raw.githubusercontent.com/JavierMarin7/UES_filtros/refs/heads/main/BD_filtros_2024a2025_depurado.csv";
-  const FUENTE_COLOR = {
-    "ACUEDUCTO":"#2b8cbe","NACIMIENTO":"#31a354","RIO":"#de2d26","QUEBRADA":"#9ecae1","POZO/AJIBE":"#fec44f","SIN DATO":"#6c757d"
-  };
-  const MESES = ["","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-  const COL = {
-    id:"ID",
-    fecha:"FECHA", encuestador:"ENCUESTADOR", municipio:"MUNICIPIO", nombre:"NOMBRE_ENCUESTADO",
-    latitud:"LATITUD", longitud:"LONGITUD",
-    fuente:"FUENTE_DONDE_TOMA_EL_AGUA",
-    empleo:"EN_QUE_EMPLEA_EL_AGUA_DEL_FILTRO",
-    salud:"HAN_DISMUNUIDO_LAS_ENFERMEDADES_ASOCIADAS_AL_AGUA_DESPUES_DEL_USO_DEL_FILTRO",
-    tanqueSed:"LIMPIEZA_DEL_TANQUE_(PRESENCIA_DE_SEDIMENTOS)",
-    vasijaSed:"LIMPIEZA_DE_LA_VASIJA_CERAMICA_(PRESENCIA_DE_SEDIMENTOS)"
+  const SUPABASE_URL = "https://uxndnptdwqvepydmgavw.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4bmRucHRkd3F2ZXB5ZG1nYXZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1ODUyMDksImV4cCI6MjA3NzE2MTIwOX0.eX0QfdOaaKMWc41BDeIUer12P14Acm9M1vWYeEuOCtE";
+  const SUPABASE_TABLE = "vw_quejas_mapa";
+  const HEADERS = {
+    apikey: SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    Accept: "application/json"
   };
 
-  /* 2) ESTADO */
-  let RAW=[], LIST=[];
-  let MAP, baseOSM, baseEsri;
-  let CAPA_VIVIENDAS, CAPA_BURBUJAS;
-  let DT, charts={}, lastText='';
-  const lastUpdateEl = document.getElementById('lastUpdate');
+  const COLOR_PALETTE = [
+    "#0d6efd", "#ef4444", "#10b981", "#f97316", "#6366f1",
+    "#14b8a6", "#e11d48", "#facc15", "#7c3aed", "#0ea5e9",
+    "#fb7185", "#1f2937"
+  ];
 
-  /* 3) HELPERS */
-  const norm = v => (v==null? "": String(v).trim()
-    .replaceAll("Á","A").replaceAll("É","E").replaceAll("Í","I").replaceAll("Ó","O").replaceAll("Ú","U")
-    .replaceAll("á","a").replaceAll("é","e").replaceAll("í","i").replaceAll("ó","o").replaceAll("ú","u")
-    .toUpperCase());
-  function asYesNo(v){ const n=norm(v); if(["SI","SÍ","YES","TRUE","1"].includes(n)) return "SI"; if(["NO","FALSE","0"].includes(n)) return "NO"; return "NO SABE"; }
-  function pct(p,t){ return !t?0: Math.round((p/t)*1000)/10 }
-  function uniq(a){ return [...new Set(a.filter(x=>x!=null && String(x).trim()!==""))] }
-  function groupBy(rows, keyFn){ const m=new Map(); for(const r of rows){ const k=keyFn(r); if(!m.has(k)) m.set(k,[]); m.get(k).push(r);} return m; }
-  function iconByFuente(f){
-    const color = FUENTE_COLOR[f] || "#888";
-    const svg = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"><circle cx="14" cy="14" r="10" fill="${color}" stroke="white" stroke-width="2"/></svg>`);
-    return L.icon({iconUrl:`data:image/svg+xml,${svg}`,iconSize:[28,28],iconAnchor:[14,14]});
-  }
-  function getDefaultIcon(){
-    const svg = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"><circle cx="14" cy="14" r="10" fill="#6c757d" stroke="white" stroke-width="2"/></svg>`);
-    return L.icon({ iconUrl: `data:image/svg+xml,${svg}`, iconSize: [28,28], iconAnchor: [14,14] });
-  }
-  function parseFecha(v){
-    if(!v) return null; const d=new Date(v); if(!isNaN(d)) return d;
-    const m=String(v).match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})$/);
-    if(m){ const dd=+m[1], mm=+m[2]-1, yy=+m[3]<100?2000+ +m[3]:+m[3]; const dt=new Date(yy,mm,dd); return isNaN(dt)?null:dt;}
-    return null;
+  let MAP, LAYER_CLUSTERS;
+  const tipoColor = new Map();
+  const lastUpdateEl = document.getElementById("lastUpdate");
+  const totalReportesEl = document.getElementById("totalReportes");
+  const resumenEl = document.getElementById("resumen");
+  const legendEl = document.getElementById("legend");
+  const btnRecargar = document.getElementById("btnRecargar");
+
+  function colorPara(tipo) {
+    const key = (tipo || "SIN DATO").toUpperCase();
+    if (!tipoColor.has(key)) {
+      const idx = tipoColor.size % COLOR_PALETTE.length;
+      tipoColor.set(key, COLOR_PALETTE[idx]);
+    }
+    return tipoColor.get(key);
   }
 
-  /* 4) MAPA (+ listeners de leyenda por overlay) */
-  function initMap(){
-    MAP = L.map('map', { fullscreenControl:true }).setView([4.6,-74.1], 7);
+  function iconoPara(tipo) {
+    const color = colorPara(tipo);
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><circle cx='16' cy='16' r='9' fill='${color}' stroke='white' stroke-width='3'/></svg>`;
+    return L.icon({
+      iconUrl: `data:image/svg+xml,${encodeURIComponent(svg)}`,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    });
+  }
 
-    baseOSM = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19, attribution:'&copy; OpenStreetMap'}).addTo(MAP);
-    baseEsri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19, attribution:'Tiles © Esri'});
+  function crearPopup(d) {
+    const partes = [];
+    partes.push(`<strong>${d.ID || "(sin radicado)"}</strong>`);
+    if (d.MUNICIPIO) partes.push(d.MUNICIPIO);
+    if (d.FECHA_REPORTE_TXT) partes.push(`<small>Reporte: ${d.FECHA_REPORTE_TXT}</small>`);
+    partes.push("<hr style='margin:6px 0' />");
+    partes.push(`<strong>Tipo:</strong> ${d.TIPO || "SIN DATO"}`);
+    partes.push(`<strong>Canal:</strong> ${d.CANAL || "SIN DATO"}`);
+    if (d.DESCRIPCION) partes.push(`<strong>Descripcion:</strong> ${d.DESCRIPCION}`);
+    if (d.PUESTO) partes.push(`<strong>Puesto:</strong> ${d.PUESTO}`);
+    if (d.MESA) partes.push(`<strong>Mesa:</strong> ${d.MESA}`);
+    if (d.REPORTANTE) partes.push(`<strong>Reportante:</strong> ${d.REPORTANTE}`);
+    if (d.CONTACTO) partes.push(`<strong>Contacto:</strong> ${d.CONTACTO}`);
+    partes.push(`<strong>Evidencias:</strong> ${d.EVIDENCIAS}`);
+    partes.push(`<strong>Coords:</strong> ${d.LATITUD.toFixed(5)}, ${d.LONGITUD.toFixed(5)}`);
+    return partes.join("<br/>");
+  }
 
-    CAPA_VIVIENDAS = L.markerClusterGroup({ chunkedLoading:true, disableClusteringAtZoom:14 });
-    CAPA_BURBUJAS  = L.layerGroup();
+  function initMap() {
+    MAP = L.map("map", { zoomControl: true }).setView([4.6, -74.1], 6);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: "&copy; OpenStreetMap"
+    }).addTo(MAP);
 
-    const overlays = { "🏠 Viviendas (puntos)": CAPA_VIVIENDAS, "💧 Fuentes (burbujas)": CAPA_BURBUJAS };
-    const layerCtrl = L.control.layers({ "OSM":baseOSM, "Satélite (Esri)":baseEsri }, overlays, {position:'topright', collapsed:true}).addTo(MAP);
+    LAYER_CLUSTERS = L.markerClusterGroup({ chunkedLoading: true, disableClusteringAtZoom: 15 });
+    MAP.addLayer(LAYER_CLUSTERS);
+  }
 
-    // Leyenda
-    const legendEl = document.getElementById('legend');
-    if (legendEl){
-      legendEl.innerHTML = Object.entries(FUENTE_COLOR).map(([k,c]) => `<div><i style="background:${c}"></i>${k}</div>`).join('');
-      // Visibilidad según overlay activo
-      legendEl.style.display = MAP.hasLayer(CAPA_BURBUJAS) ? 'block' : 'none';
-      MAP.on('overlayadd', (e)=>{ if (e.name === '💧 Fuentes (burbujas)') legendEl.style.display='block'; });
-      MAP.on('overlayremove', (e)=>{ if (e.name === '💧 Fuentes (burbujas)') legendEl.style.display='none'; });
+  function renderMap(data) {
+    LAYER_CLUSTERS.clearLayers();
+    tipoColor.clear();
+
+    const puntos = data.filter(d => Number.isFinite(d.LATITUD) && Number.isFinite(d.LONGITUD));
+    if (!puntos.length) {
+      resumenEl.innerHTML = "<em>No hay coordenadas disponibles.</em>";
+      legendEl.style.display = "none";
+      return;
     }
 
-    document.getElementById('btnFit')?.addEventListener('click', ()=> fitBoundsToPoints(LIST));
-    document.getElementById('btnGeoJSON')?.addEventListener('click', downloadGeoJSON);
-  }
-  function fitBoundsToPoints(data){
-    const pts = data.filter(d=>Number.isFinite(d.LATITUD)&&Number.isFinite(d.LONGITUD));
-    if(!pts.length) return;
-    const b = L.latLngBounds(pts.map(d=>[d.LATITUD,d.LONGITUD]));
-    MAP.fitBounds(b.pad(0.15));
-  }
+    const resumen = new Map();
 
-  /* 5) CARGA CSV */
-  function papaParseUrl(url){ return new Promise((resolve,reject)=>{ Papa.parse(url, { download:true, header:true, dynamicTyping:false, skipEmptyLines:true, complete:resolve, error:reject }); }); }
-  async function fetchCSV(){
-    const url = GOOGLE_SHEET_URL + (GOOGLE_SHEET_URL.includes('?') ? '&' : '?') + '_=' + Date.now();
-    try{
-      const res = await papaParseUrl(url);
-      if(res?.data?.length) { lastText = "Última carga directa: " + new Date().toLocaleString(); return res.data; }
-      throw new Error('CSV vacío');
-    }catch(e1){
-      console.warn('Fallo CSV directo, probando proxy…', e1);
-      const proxies = ['https://api.allorigins.win/raw?url='];
-      for(const px of proxies){
-        try{
-          const res = await papaParseUrl(px + encodeURIComponent(url));
-          if(res?.data?.length){ lastText = "Última carga (vía proxy): " + new Date().toLocaleString(); return res.data; }
-        }catch(e2){ console.warn('Proxy falló', px, e2); }
-      }
-      throw new Error('No se pudo descargar el CSV');
-    }
-  }
-  async function loadData(){
-    const btn = document.getElementById('btnCargar');
-    if (btn){ btn.disabled = true; btn.textContent = 'Cargando…'; }
-    try{
-      const rows = await fetchCSV();
-      RAW = rows.map(r=>{
-        const f = parseFecha(r[COL.fecha]);
-        const lat = Number(String(r[COL.latitud]||'').replace(',','.'));
-        const lon = Number(String(r[COL.longitud]||'').replace(',','.'));
-        return {
-          raw:r,
-          ID: r[COL.id],
-          FECHA: f, FECHA_TXT: f? f.toISOString().slice(0,10) : (r[COL.fecha]||""),
-          ANO: f? f.getFullYear(): null,
-          MES: f? f.getMonth()+1: null,
-          ENCUESTADOR: r[COL.encuestador]||"",
-          MUNICIPIO: r[COL.municipio]||"",
-          NOMBRE_ENCUESTADO: r[COL.nombre]||"",
-          FUENTE: r[COL.fuente]||"SIN DATO",
-          SALUD: asYesNo(r[COL.salud]),
-          TANQUE_SED: asYesNo(r[COL.tanqueSed]),
-          VASIJA_SED: asYesNo(r[COL.vasijaSed]),
-          LATITUD: isNaN(lat)? null: lat,
-          LONGITUD: isNaN(lon)? null: lon
-        };
+    puntos.forEach(d => {
+      const marker = L.marker([d.LATITUD, d.LONGITUD], { icon: iconoPara(d.TIPO) }).bindPopup(crearPopup(d));
+      LAYER_CLUSTERS.addLayer(marker);
+      const key = d.TIPO || "SIN DATO";
+      resumen.set(key, (resumen.get(key) || 0) + 1);
+    });
+
+    const badges = Array.from(resumen.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([tipo, cantidad]) => {
+        const color = colorPara(tipo);
+        return `<span style="background:${color}">${tipo}: ${cantidad}</span>`;
       });
+    resumenEl.innerHTML = badges.join("");
 
-      fillFilterOptions(RAW);
-      applyFiltersAndRender(true); // primera carga
-      if(lastUpdateEl){ lastUpdateEl.textContent = lastText; lastUpdateEl.className = "badge text-bg-success"; }
-    }catch(err){
-      console.error(err);
-      if(lastUpdateEl){ lastUpdateEl.textContent = "Error al descargar CSV"; lastUpdateEl.className = "badge text-bg-danger"; }
-      alert("No pude leer el CSV (revisa consola o prueba abrir el HTML desde http://localhost).");
-    }finally{
-      if (btn){ btn.disabled = false; btn.textContent = 'Refrescar datos'; }
+    legendEl.innerHTML = Array.from(resumen.keys())
+      .sort((a, b) => a.localeCompare(b, "es", { numeric: true }))
+      .map(tipo => `<div><i style="background:${colorPara(tipo)}"></i>${tipo}</div>`)
+      .join("");
+    legendEl.style.display = "block";
+
+    const bounds = L.latLngBounds(puntos.map(d => [d.LATITUD, d.LONGITUD]));
+    MAP.fitBounds(bounds.pad(0.12));
+  }
+
+  async function fetchSupabase() {
+    const url = new URL(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`);
+    url.searchParams.set("select", "*");
+    url.searchParams.set("order", "fecha_reporte.desc");
+    url.searchParams.set("limit", "2000");
+
+    const response = await fetch(url, { headers: HEADERS });
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`Supabase ${response.status} ${response.statusText}: ${text}`);
     }
+    return response.json();
   }
 
-  /* 6) FILTROS (opciones) */
-  function fillFilterOptions(data){
-    const $ano = document.getElementById('fano');
-    const $mes = document.getElementById('fmes');
-    const $enc = document.getElementById('fencuestador');
-    const $mun = document.getElementById('fmpio');
-
-    if ($ano) $ano.innerHTML = `<option value="">Todos</option>` + uniq(data.map(d=>d.ANO)).filter(Boolean).sort((a,b)=>a-b).map(v=>`<option>${v}</option>`).join('');
-    if ($mes) $mes.innerHTML = `<option value="">Todos</option>` + uniq(data.map(d=>d.MES)).filter(Boolean).sort((a,b)=>a-b).map(v=>`<option value="${v}">${String(v).padStart(2,'0')} - ${MESES[v]}</option>`).join('');
-    if ($enc) $enc.innerHTML = `<option value="">Todos</option>` + uniq(data.map(d=>d.ENCUESTADOR)).sort((a,b)=>a.localeCompare(b,'es',{numeric:true})).map(v=>`<option>${v}</option>`).join('');
-    if ($mun) $mun.innerHTML = `<option value="">Todos</option>` + uniq(data.map(d=>d.MUNICIPIO)).sort((a,b)=>a.localeCompare(b,'es',{numeric:true})).map(v=>`<option>${v}</option>`).join('');
-  }
-
-  /* 7) ORQUESTADOR */
-  function applyFiltersAndRender(resetAll = false){
-    const fano   = document.getElementById('fano')?.value || "";
-    const fmes   = document.getElementById('fmes')?.value || "";
-    const fenc   = document.getElementById('fencuestador')?.value || "";
-    const fmpio  = document.getElementById('fmpio')?.value || "";
-    const fdesde = document.getElementById('fdesde')?.value || "";
-    const fhasta = document.getElementById('fhasta')?.value || "";
-
-    LIST = resetAll ? [...RAW] : RAW.filter(d=>{
-      if(fano   && String(d.ANO)!==String(fano)) return false;
-      if(fmes   && String(d.MES)!==String(fmes)) return false;
-      if(fenc   && d.ENCUESTADOR!==fenc)         return false;
-      if(fmpio  && d.MUNICIPIO!==fmpio)          return false;
-      const fecha = d.FECHA;
-      if(fdesde){ const dd = new Date(fdesde); if (!fecha || fecha < dd) return false; }
-      if(fhasta){ const hh = new Date(fhasta); if (!fecha || fecha > hh) return false; }
-      return true;
-    });
-
-    renderKPIs(LIST);
-    renderMap(LIST);
-    renderCharts(LIST);
-    renderTable(LIST);
-  }
-  window.applyFiltersAndRender = applyFiltersAndRender;
-
-  /* 8) KPIs */
-  function renderKPIs(data){
-    const total = data.length;
-    const saludSI = data.filter(d=>d.SALUD==="SI").length;
-    const tanqueLimpio = data.filter(d=>d.TANQUE_SED==="NO").length;
-    const vasijaLimpia = data.filter(d=>d.VASIJA_SED==="NO").length;
-    const tiposFuente = new Set(data.map(d=>d.FUENTE).filter(Boolean)).size;
-
-    document.getElementById('kpiTotal').textContent = total.toLocaleString('es-CO');
-    document.getElementById('kpiSalud').textContent = pct(saludSI,total) + "%";
-    document.getElementById('kpiTanqueLimpio').textContent = pct(tanqueLimpio,total) + "%";
-    document.getElementById('kpiVasijaLimpia').textContent = pct(vasijaLimpia,total) + "%";
-    document.getElementById('kpiTiposFuente').textContent = String(tiposFuente);
-  }
-
-  /* 9) MAPA (render con dos capas + burbujas proporcionales) */
-  function renderMap(data){
-    CAPA_VIVIENDAS.clearLayers();
-    CAPA_BURBUJAS.clearLayers();
-
-    const pts = data.filter(d=>Number.isFinite(d.LATITUD)&&Number.isFinite(d.LONGITUD));
-    document.getElementById('mapCount').textContent = `${pts.length} ${pts.length===1?'punto':'puntos'}`;
-
-    // Resumen por fuente
-    const conteoPorFuente = {};
-    for (const d of pts){ const f = norm(d.FUENTE||"SIN DATO"); conteoPorFuente[f]=(conteoPorFuente[f]||0)+1; }
-    const resumenEl = document.getElementById('mapResumen');
-    if (resumenEl){
-      resumenEl.innerHTML = Object.entries(conteoPorFuente).map(([f,n]) =>
-        `<span class="badge rounded-pill" style="background:${FUENTE_COLOR[f]||'#6c757d'};color:#fff;margin:2px 4px">${f}: ${n}</span>`
-      ).join(' ');
-    }
-
-    // Capa Viviendas (puntos)
-    for (const d of pts){
-      const coordTxt = `${d.LATITUD.toFixed(5)}, ${d.LONGITUD.toFixed(5)}`;
-      const popup = `
-        <div style="min-width:220px">
-          <div><b>${d.NOMBRE_ENCUESTADO||'(sin nombre)'}</b></div>
-          <div>${d.MUNICIPIO||'-'}</div>
-          <div><small>${d.FECHA_TXT||''}</small></div>
-          <hr class="my-1"/>
-          <div><b>Fuente:</b> ${d.FUENTE||'-'}</div>
-          <div><b>Encuestador:</b> ${d.ENCUESTADOR||'-'}</div>
-          <div><b>Coordenadas:</b> ${coordTxt}</div>
-        </div>`.trim();
-
-      const mk = L.marker([d.LATITUD, d.LONGITUD], { icon: iconByFuente(norm(d.FUENTE)) }).bindPopup(popup);
-      CAPA_VIVIENDAS.addLayer(mk);
-    }
-
-    // Capa Burbujas (agregado por lat|lon|fuente)
-    const agg = new Map();
-    for (const d of pts){
-      const lat = Number(d.LATITUD.toFixed(5));
-      const lon = Number(d.LONGITUD.toFixed(5));
-      const f   = norm(d.FUENTE || "SIN DATO");
-      const key = `${lat}|${lon}|${f}`;
-      if(!agg.has(key)) agg.set(key, {lat, lon, fuente:f, count:0});
-      agg.get(key).count++;
-    }
-    const scale = c => Math.min(22, 4 + 4 * Math.sqrt(c)); // radio proporcional
-    agg.forEach(({lat, lon, fuente, count}) => {
-      const color = FUENTE_COLOR[fuente] || '#777';
-      const circle = L.circleMarker([lat, lon], {
-        radius: scale(count), color: color, fillColor: color, fillOpacity: 0.25, weight: 2
-      }).bindPopup(`<b>Fuente:</b> ${fuente}<br/><b>Encuestas en este punto:</b> ${count}<br/><small>${lat}, ${lon}</small>`);
-      CAPA_BURBUJAS.addLayer(circle);
-    });
-
-    if (!MAP.hasLayer(CAPA_VIVIENDAS)) CAPA_VIVIENDAS.addTo(MAP);
-    if (!MAP.hasLayer(CAPA_BURBUJAS))  CAPA_BURBUJAS.addTo(MAP);
-    fitBoundsToPoints(data);
-  }
-  // Descargar GeoJSON filtrado
-  function downloadGeoJSON(){
-    const features = LIST.filter(d=>Number.isFinite(d.LATITUD)&&Number.isFinite(d.LONGITUD)).map(d=>({
-      type:"Feature",
-      geometry:{ type:"Point", coordinates:[d.LONGITUD, d.LATITUD] },
-      properties:{
-        ID:d.ID, FECHA:d.FECHA_TXT, ENCUESTADOR:d.ENCUESTADOR, MUNICIPIO:d.MUNICIPIO,
-        NOMBRE_ENCUESTADO:d.NOMBRE_ENCUESTADO, FUENTE:d.FUENTE, SALUD:d.SALUD,
-        TANQUE_SED:d.TANQUE_SED, VASIJA_SED:d.VASIJA_SED
-      }
-    }));
-    const fc = { type:"FeatureCollection", features };
-    const blob = new Blob([JSON.stringify(fc,null,2)], {type:"application/geo+json"});
-    const url = URL.createObjectURL(blob);
-    const a=document.createElement('a'); a.href=url; a.download='encuestas_filtros_filtrado.geojson';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-  }
-
-  /* 10) GRÁFICAS */
-  function ensureChart(id, cfg){ if(charts[id]) charts[id].destroy(); charts[id] = new Chart(document.getElementById(id).getContext('2d'), cfg); }
-  function renderCharts(data){
-    // 1) Pie por FUENTE
-    const byFuente = groupBy(data.filter(d=>d.FUENTE), d=>d.FUENTE);
-    const fuenteLabels = Array.from(byFuente.keys());
-    ensureChart("chartFuente", {
-      type:"pie",
-      data:{ labels:fuenteLabels, datasets:[{
-        data:fuenteLabels.map(k=>byFuente.get(k).length),
-        backgroundColor:fuenteLabels.map(l=>FUENTE_COLOR[norm(l)]||'#888')
-      }]},
-      options:{ maintainAspectRatio:false, plugins:{ legend:{ position:"bottom" } } }
-    });
-
-    // Agrupar por MUNICIPIO
-    const byMun = groupBy(data.filter(d=>d.MUNICIPIO), d=>d.MUNICIPIO);
-    const munLabels = Array.from(byMun.keys());
-
-    // (Nueva) Encuestas por municipio con Top N + click/ctrl-click
-    const selTopN = document.getElementById("topNSelect");
-    const topN = selTopN ? parseInt(selTopN.value) : 10;
-    let pairs = munLabels.map(m => [m, byMun.get(m).length]).sort((a,b)=> b[1]-a[1]);
-    if (topN > 0) pairs = pairs.slice(0, topN);
-    const encMunLabels = pairs.map(x=>x[0]);
-    const encMunCounts = pairs.map(x=>x[1]);
-
-    ensureChart("chartEncuestasMunicipio", {
-  type: "bar",
-  data: {
-    labels: encMunLabels,
-    datasets: [{
-      label: "Encuestas",
-      data: encMunCounts,
-      backgroundColor: "rgba(0,123,255,.35)",
-      borderColor: "#007bff",
-      borderWidth: 1,
-      borderRadius: 6
-    }]
-  },
-  plugins: [ChartDataLabels],
-options: {
-  maintainAspectRatio: false,
-  responsive: true,
-  indexAxis: "y",
-  plugins: {
-    legend: { display: false },
-    datalabels: {
-      // 👉 número DENTRO de la barra, pegado al extremo derecho
-      anchor: 'end',      // ancla al final de la barra (lado derecho)
-      align: 'right',     // alineación hacia adentro de la barra
-      offset: -30,         // valor negativo = empuja hacia adentro
-      clamp: true,
-      clip: true,
-      color: '#0f172a',
-      font: { weight: 700 },
-      formatter: v => Number(v).toLocaleString('es-CO')
-    },
-    tooltip: {
-      callbacks: { label: c => ` ${c.raw.toLocaleString('es-CO')} encuestas` }
-    }
-  },
-  scales: {
-    x: { beginAtZero: true, ticks: { precision: 0 } }
-  },
-  
-    onClick: (evt, elements) => {
-      if (!elements?.length) return;
-      const i = elements[0].index;
-      const municipio = encMunLabels[i];
-      const sel = document.getElementById("fmpio");
-      const limpiar = evt.ctrlKey || evt.metaKey;
-      if (limpiar) {
-        sel.value = "";
-        applyFiltersAndRender(true);
-      } else {
-        sel.value = municipio;
-        applyFiltersAndRender();
-      }
-      setTimeout(() => fitBoundsToPoints(LIST), 0);
-    }
-  }
-});
-
-    // 2) Salud apilada por municipio
-    const saludSI = munLabels.map(m=>byMun.get(m).filter(r=>r.SALUD==="SI").length);
-    const saludNO = munLabels.map(m=>byMun.get(m).filter(r=>r.SALUD==="NO").length);
-    const saludNS = munLabels.map(m=>byMun.get(m).filter(r=>r.SALUD==="NO SABE").length);
-    ensureChart("chartSaludMunicipio", {
-      type:"bar",
-      data:{ labels:munLabels, datasets:[
-        {label:"Sí", data:saludSI, stack:"s"},
-        {label:"No", data:saludNO, stack:"s"},
-        {label:"No sabe", data:saludNS, stack:"s"}
-      ]},
-      options:{ maintainAspectRatio:false, responsive:true, indexAxis:'y',
-        plugins:{legend:{position:"bottom"}}, scales:{ x:{stacked:true}, y:{stacked:true} } }
-    });
-
-    // 3) % tanque con sedimentos
-    const tanquePct = munLabels.map(m=>{ const r=byMun.get(m); return pct(r.filter(x=>x.TANQUE_SED==="SI").length, r.length);});
-    ensureChart("chartTanqueSedimentos", {
-      type:"bar", data:{ labels:munLabels, datasets:[{label:"% con sedimentos", data:tanquePct}] },
-      options:{ maintainAspectRatio:false, plugins:{legend:{display:false}}, indexAxis:'y',
-        scales:{ x:{ beginAtZero:true, max:100, ticks:{ callback:v=>v+"%" } } } }
-    });
-
-    // 4) % vasija con sedimentos
-    const vasijaPct = munLabels.map(m=>{ const r=byMun.get(m); return pct(r.filter(x=>x.VASIJA_SED==="SI").length, r.length);});
-    ensureChart("chartVasijaSedimentos", {
-      type:"bar", data:{ labels:munLabels, datasets:[{label:"% con sedimentos", data:vasijaPct}] },
-      options:{ maintainAspectRatio:false, plugins:{legend:{display:false}}, indexAxis:'y',
-        scales:{ x:{ beginAtZero:true, max:100, ticks:{ callback:v=>v+"%" } } } }
-    });
-
-    // 5) % mejora en salud por fuente
-    const saludPctFuente = fuenteLabels.map(f=>{ const r=byFuente.get(f); return pct(r.filter(x=>x.SALUD==="SI").length, r.length);});
-    ensureChart("chartSaludPorFuente", {
-      type:"bar", data:{ labels:fuenteLabels, datasets:[{label:"% con mejora (Sí)", data:saludPctFuente}] },
-      options:{ maintainAspectRatio:false, plugins:{legend:{display:false}},
-        scales:{ y:{ beginAtZero:true, ticks:{ callback:v=>v+"%" } } } }
-    });
-
-    // Re-render al cambiar TopN
-    if (selTopN && !selTopN.dataset.bound) {
-      selTopN.addEventListener("change", () => renderCharts(data));
-      selTopN.dataset.bound = "true";
-    }
-  }
-
-  /* 11) TABLA + filtros rápidos */
-  function renderTable(data){
-    const rows = data.map(d=>[
-      d.ID||"", d.FECHA_TXT||"", d.ENCUESTADOR||"", d.MUNICIPIO||"", d.NOMBRE_ENCUESTADO||"",
-      d.FUENTE||"", d.SALUD||"", d.TANQUE_SED||"", d.VASIJA_SED||""
-    ]);
-    if(DT) DT.destroy();
-    DT = $("#tbl").DataTable({
-      data: rows,
-      columns: [
-        {title:'ID'},{title:'FECHA'},{title:'ENCUESTADOR'},{title:'MUNICIPIO'},{title:'NOMBRE_ENCUESTADO'},
-        {title:'FUENTE_DONDE_TOMA_EL_AGUA'},
-        {title:'HAN_DISMUNUIDO_LAS_ENFERMEDADES_ASOCIADAS_AL_AGUA_DESPUES_DEL_USO_DEL_FILTRO'},
-        {title:'LIMPIEZA_DEL_TANQUE_(PRESENCIA_DE_SEDIMENTOS)'},
-        {title:'LIMPIEZA_DE_LA_VASIJA_CERAMICA_(PRESENCIA_DE_SEDIMENTOS)'}
-      ],
-      pageLength:10, order:[[1,'desc']],
-      language:{ url:"https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json" },
-      dom:'Bfrtip',
-      buttons:[
-        { extend:'excelHtml5', title:'Encuestas_Filtros_Agua', text:'Excel', className:'btn btn-success btn-sm' },
-        { extend:'csvHtml5',   title:'Encuestas_Filtros_Agua', text:'CSV',   className:'btn btn-outline-secondary btn-sm' },
-        { extend:'print',      text:'Imprimir',                className:'btn btn-outline-primary btn-sm' }
-      ]
-    });
-
-    const munVals = uniq(data.map(d=>d.MUNICIPIO)).sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
-    const encVals = uniq(data.map(d=>d.ENCUESTADOR)).sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
-    const $tblMun = document.getElementById('tblFiltroMunicipio');
-    const $tblEnc = document.getElementById('tblFiltroEncuestador');
-    if ($tblMun) $tblMun.innerHTML = `<option value="">Tabla: todos los municipios</option>` + munVals.map(v=>`<option>${v}</option>`).join('');
-    if ($tblEnc) $tblEnc.innerHTML = `<option value="">Tabla: todos los encuestadores</option>` + encVals.map(v=>`<option>${v}</option>`).join('');
-
-    if ($tblMun) $tblMun.onchange = function(){
-      DT.column(3).search(this.value ? '^'+this.value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$' : '', true, false).draw();
-    };
-    if ($tblEnc) $tblEnc.onchange = function(){
-      DT.column(2).search(this.value ? '^'+this.value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$' : '', true, false).draw();
+  function parsearFila(row) {
+    const fechaReporte = row.fecha_reporte ? new Date(row.fecha_reporte) : null;
+    const lat = row.latitud === null ? null : Number(row.latitud);
+    const lon = row.longitud === null ? null : Number(row.longitud);
+    return {
+      ID: row.radicado || row.id || "",
+      FECHA_REPORTE_TXT: fechaReporte && !Number.isNaN(fechaReporte) ? fechaReporte.toISOString().slice(0, 10) : "",
+      MUNICIPIO: row.municipio || "",
+      TIPO: row.tipo || "SIN DATO",
+      DESCRIPCION: row.descripcion || "",
+      CANAL: row.canal || "SIN DATO",
+      PUESTO: row.puesto_nombre || "",
+      MESA: row.mesa_id || row.mesa_numero || "",
+      REPORTANTE: [row.reportante_tipo, row.reportante_nombre].filter(Boolean).join(" - "),
+      CONTACTO: row.reportante_telefono || row.origen_numero || "",
+      EVIDENCIAS: Number(row.evidencias_count) || 0,
+      LATITUD: Number.isFinite(lat) ? lat : NaN,
+      LONGITUD: Number.isFinite(lon) ? lon : NaN
     };
   }
 
-// === BOTÓN: Borrar filtro de municipio ===
-document.getElementById('btnClearMunFilter').addEventListener('click', () => {
-  const sel = document.getElementById('fmpio');
-  if (sel) sel.value = "";
-  applyFiltersAndRender(true); // 🔹 vuelve a mostrar todos los datos
-});
+  async function cargarDatos() {
+    if (btnRecargar) {
+      btnRecargar.disabled = true;
+      btnRecargar.textContent = "Cargando...";
+    }
+    if (lastUpdateEl) {
+      lastUpdateEl.textContent = "Descargando datos...";
+    }
+    try {
+      const rows = await fetchSupabase();
+      const registros = rows.map(parsearFila);
+      renderMap(registros);
+      if (lastUpdateEl) {
+        lastUpdateEl.textContent = "Ultima carga: " + new Date().toLocaleString();
+      }
+      if (totalReportesEl) {
+        totalReportesEl.textContent = `${rows.length.toLocaleString("es-CO")} reportes`;
+      }
+    } catch (error) {
+      console.error(error);
+      if (lastUpdateEl) {
+        lastUpdateEl.textContent = "Error al conectar con Supabase";
+      }
+      alert("No se pudieron cargar los datos de Supabase. Revisa la consola para mas detalles.");
+    } finally {
+      if (btnRecargar) {
+        btnRecargar.disabled = false;
+        btnRecargar.textContent = "Recargar datos";
+      }
+    }
+  }
 
-
-
-  /* 12) EVENTOS */
-  document.getElementById('btnFiltrar')?.addEventListener('click', ()=> applyFiltersAndRender());
-  document.getElementById('btnLimpiar')?.addEventListener('click', ()=>{
-    ['fano','fmes','fencuestador','fmpio','fdesde','fhasta'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
-    applyFiltersAndRender(true);
-  });
-  document.getElementById('btnCargar')?.addEventListener('click', loadData);
-
-  /* 13) STARTUP */
   initMap();
-  loadData();
+  cargarDatos();
+  btnRecargar?.addEventListener("click", cargarDatos);
   </script>
 </body>
 </html>
