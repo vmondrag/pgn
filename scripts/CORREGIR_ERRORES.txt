@@ -1,0 +1,36 @@
+
+
+python extract_hybrid.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\2013" --llm gpt-oss:20b --output-dir output_2013_hybrid 
+python extract_hybrid.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\2014" --llm gpt-oss:20b --output-dir output_2014_hybrid
+python extract_hybrid.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\2015" --llm gpt-oss:20b --output-dir output_2015_hybrid
+
+
+CLOUD LLM
+python extract_hybrid.py --dir-in C:\temp\PNG_CERTIFICADO_V3\Decretos\2012 --output-dir output_2012_hybrid --resume
+python extract_hybrid.py --dir-in C:\temp\PNG_CERTIFICADO_V3\Decretos\2013 --output-dir output_2013_hybrid --resume
+python extract_hybrid.py --dir-in C:\temp\PNG_CERTIFICADO_V3\Decretos\2014 --output-dir output_2014_hybrid --resume
+
+CLOUD AZURE
+python extract_hybrid.py --dir-in C:\temp\PNG_CERTIFICADO_V3\Decretos\2015 --output-dir output_2015_hybrid --llm_azure --resume
+python extract_hybrid.py --dir-in C:\temp\PNG_CERTIFICADO_V3\Decretos\2016 --output-dir output_2016_hybrid --llm_azure --resume
+
+LOCAL
+python extract_hybrid.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\2016" --llm gpt-oss:20b --output-dir output_2016_hybrid
+python extract_hybrid.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\2016" --llm gpt-oss:20b --output-dir output_2017_hybrid
+python extract_hybrid.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\2016" --llm gpt-oss:20b --output-dir output_2018_hybrid
+
+
+
+CORREGIR
+
+# Con Ollama local (default)
+python reprocess_orphans.py --anio 2014 --limit 50
+
+# Con Azure OpenAI
+python reprocess_orphans.py --llm_azure --anio 2014 --limit 50
+
+# Dry run con Azure (no guarda)
+python reprocess_orphans.py --llm_azure --anio 2014 --limit 10 --dry-run
+
+# Todos los años con Azure
+python reprocess_orphans.py --llm_azure --all --limit 100

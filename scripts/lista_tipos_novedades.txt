@@ -1,0 +1,30 @@
+====================================================================================================
+LISTA COMPLETA DE TIPOS DE NOVEDADES
+Fuente: Base de Datos novedades_pgn.db - Tabla ejemplos_aprendizaje
+====================================================================================================
+
+Total de tipos únicos: 16
+Total de ejemplos de aprendizaje: 35,546
+
+   # CÓDIGO            EJEMPLOS    CONF% TIPO                 DESCRIPCIÓN
+------------------------------------------------------------------------------------------------------------------------
+   1 N                   14,524    90.0% INGRESO              Nombramiento
+   2 PROR                 7,505    90.0% N/A                  Sin descripción
+   3 E                    3,467    90.0% MOVIMIENTO           Encargo
+   4 ASIG                 3,238    90.0% MOVIMIENTO           Asignación
+   5 R                    2,943    90.0% RETIRO               Renuncia/Retiro
+   6 RN                   1,247    90.0% RETIRO               Revocatoria Nombramiento
+   7 C                    1,070    90.0% MOVIMIENTO           Comisión
+   8 NAADH                  612    90.0% INGRESO              Nombramiento Ad Honorem
+   9 INSUB                  485    90.0% RETIRO               Insubsistencia
+  10 MD                     443    90.0% ESPECIAL             Modificación Decreto
+  11 N/E                      5    90.0% N/A                  Sin descripción
+  12 NA                       2    90.0% N/A                  Sin descripción
+  13 TRAS                     2    90.0% MOVIMIENTO           Traslado
+  14  céré                    1    90.0% N/A                  Sin descripción
+  15 E/N                      1    90.0% N/A                  Sin descripción
+  16 LIC                      1    90.0% N/A                  Sin descripción
+------------------------------------------------------------------------------------------------------------------------
+TOTAL                     35,546
+
+====================================================================================================

@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resoluciones Pendientes de Revision - PGN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f59e0b;
+            --primary-light: #fbbf24;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --gradient-1: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            --gradient-2: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1600px; margin: 0 auto; padding: 1.5rem; }
+
+        .nav-tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+
+        .nav-tab {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 1.5rem; background: var(--bg-card);
+            color: var(--text-secondary); border-radius: 12px;
+            text-decoration: none; font-weight: 500;
+            border: 2px solid var(--border); transition: all 0.3s;
+        }
+        .nav-tab:hover { background: var(--bg-hover); color: var(--text-primary); }
+        .nav-tab.active { background: var(--gradient-1); color: white; border-color: transparent; }
+
+        .header {
+            text-align: center; margin-bottom: 2rem; padding: 1.5rem;
+            background: var(--gradient-1); border-radius: 15px;
+        }
+        .header h1 { font-size: 2rem; font-weight: 700; }
+        .header p { opacity: 0.9; }
+
+        .stats-bar { display: flex; gap: 2rem; margin-bottom: 1rem; padding: 1rem; background: var(--bg-card); border-radius: 10px; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--warning); }
+        .stat-label { font-size: 0.8rem; color: var(--text-secondary); }
+
+        .search-section {
+            background: var(--bg-card); border-radius: 15px; padding: 1.5rem;
+            margin-bottom: 1.5rem; border: 1px solid var(--border);
+        }
+        .search-form {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem; align-items: end;
+        }
+
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.75rem; border: 2px solid var(--border);
+            border-radius: 10px; background: var(--bg-dark); color: var(--text-primary); font-size: 0.95rem;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--primary-light);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem; border: none; border-radius: 10px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s;
+        }
+        .btn-primary { background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: black; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn:hover { transform: translateY(-2px); }
+
+        table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 15px; overflow: hidden; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--bg-dark); color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; }
+        tr:hover td { background: var(--bg-hover); }
+
+        .badge { display: inline-block; padding: 0.25rem 0.6rem; border-radius: 15px; font-size: 0.75rem; font-weight: 600; }
+        .badge-error { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .badge-orphan { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .badge-info { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+
+        .pdf-link {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            padding: 0.3rem 0.6rem; background: rgba(239, 68, 68, 0.15);
+            color: #ef4444; border-radius: 6px; text-decoration: none; font-size: 0.8rem;
+        }
+        .pdf-link:hover { background: rgba(239, 68, 68, 0.3); }
+
+        .btn-review {
+            padding: 0.4rem 0.8rem; background: var(--primary-light); color: white;
+            border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+        }
+        .btn-review:hover { background: var(--primary); }
+
+        .text-preview { max-width: 250px; max-height: 50px; overflow: hidden; text-overflow: ellipsis; font-size: 0.8rem; color: var(--text-secondary); }
+
+        /* Modal */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); z-index: 1000; backdrop-filter: blur(5px);
+        }
+        .modal-overlay.active { display: flex; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 2rem; }
+        .modal {
+            background: var(--bg-card); border-radius: 20px; width: 100%; max-width: 1200px;
+            margin: auto; border: 1px solid var(--border);
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.5rem; border-bottom: 1px solid var(--border);
+        }
+        .modal-close { background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; }
+        .modal-body { padding: 1.5rem; }
+
+        /* Correction layout */
+        .two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        @media (max-width: 900px) { .two-columns { grid-template-columns: 1fr; } }
+
+        .ocr-text {
+            background: var(--bg-dark); border: 1px solid var(--border); border-radius: 10px;
+            padding: 1rem; max-height: 400px; overflow-y: auto;
+            font-family: monospace; font-size: 0.85rem; white-space: pre-wrap;
+        }
+        .correction-form { background: var(--bg-dark); border-radius: 10px; padding: 1rem; }
+        .correction-form h4 { margin-bottom: 1rem; color: var(--success); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+
+        .funcionario-entry {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 1rem; margin-bottom: 1rem;
+        }
+        .funcionario-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .btn-remove { background: var(--danger); color: white; border: none; padding: 0.3rem 0.6rem; border-radius: 5px; cursor: pointer; }
+
+        .alert { padding: 1rem; border-radius: 10px; margin-bottom: 1rem; }
+        .alert-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .alert-error { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+        .loading { text-align: center; padding: 3rem; color: var(--text-secondary); }
+        .spinner {
+            width: 40px; height: 40px; border: 3px solid var(--border);
+            border-top-color: var(--accent); border-radius: 50%;
+            animation: spin 1s linear infinite; margin: 0 auto 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <nav class="nav-tabs">
+            <a href="/" class="nav-tab">Decretos</a>
+            <a href="/resoluciones" class="nav-tab">Resoluciones</a>
+            <a href="/resoluciones/huerfanas" class="nav-tab active">Pendientes Revision</a>
+            <a href="/configuracion" class="nav-tab">Configuracion</a>
+        </nav>
+
+        <header class="header">
+            <h1>Resoluciones Pendientes de Revision</h1>
+            <p>Resoluciones sin novedades extraidas o que requieren revision manual - con correccion asistida por IA</p>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="statTotal">-</div>
+                <div class="stat-label">Total Pendientes</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statRevision">-</div>
+                <div class="stat-label">Requieren Revision</div>
+            </div>
+        </div>
+
+        <section class="search-section">
+            <form class="search-form" id="searchForm">
+                <div class="form-group">
+                    <label for="resolucion">Resolucion #</label>
+                    <input type="text" id="resolucion" placeholder="Numero...">
+                </div>
+                <div class="form-group">
+                    <label for="anio">Anio</label>
+                    <select id="anio"><option value="">Todos</option></select>
+                </div>
+                <div class="form-group">
+                    <label for="soloPendientes">Tipo</label>
+                    <select id="soloPendientes">
+                        <option value="false">Todas huerfanas</option>
+                        <option value="true">Solo requieren revision</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+        </section>
+
+        <div id="resultsContainer">
+            <div class="loading"><div class="spinner"></div><p>Cargando resoluciones...</p></div>
+        </div>
+    </div>
+
+    <!-- Modal de Correccion -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Corregir Resolucion</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '';
+        let currentResolucionId = null;
+        let currentOcrText = '';
+        let funcionarioCount = 0;
+        let CODIGOS_RESOLUCION = [];
+
+        async function loadCodigosResolucion() {
+            try {
+                const resp = await fetch(`${API_URL}/api/resoluciones/tipos`);
+                CODIGOS_RESOLUCION = await resp.json();
+            } catch (e) {
+                CODIGOS_RESOLUCION = [
+                    { codigo: 'VAC', descripcion: 'Vacaciones', tipo_general: 'VACACIONES' },
+                    { codigo: 'LR', descripcion: 'Licencia Remunerada', tipo_general: 'LICENCIA' },
+                    { codigo: 'LNR', descripcion: 'Licencia No Remunerada', tipo_general: 'LICENCIA' },
+                    { codigo: 'LMAT', descripcion: 'Licencia Maternidad', tipo_general: 'LICENCIA' },
+                    { codigo: 'LPAT', descripcion: 'Licencia Paternidad', tipo_general: 'LICENCIA' },
+                    { codigo: 'LENF', descripcion: 'Licencia Enfermedad', tipo_general: 'LICENCIA' },
+                    { codigo: 'LLUT', descripcion: 'Licencia Luto', tipo_general: 'LICENCIA' },
+                    { codigo: 'CSER', descripcion: 'Comision de Servicio', tipo_general: 'COMISION' },
+                    { codigo: 'CEST', descripcion: 'Comision de Estudios', tipo_general: 'COMISION' },
+                    { codigo: 'E', descripcion: 'Encargo', tipo_general: 'ENCARGO' },
+                    { codigo: 'N', descripcion: 'Nombramiento', tipo_general: 'NOMBRAMIENTO' },
+                    { codigo: 'R', descripcion: 'Renuncia', tipo_general: 'RETIRO' },
+                    { codigo: 'SUSP', descripcion: 'Suspension', tipo_general: 'SANCION' },
+                    { codigo: 'T', descripcion: 'Traslado', tipo_general: 'TRASLADO' },
+                    { codigo: 'PERM', descripcion: 'Permiso', tipo_general: 'PERMISO' },
+                    { codigo: 'OTRO', descripcion: 'Otro tipo de novedad', tipo_general: 'OTRO' }
+                ];
+            }
+        }
+
+        function buildCodigosOptions() {
+            const groups = {};
+            CODIGOS_RESOLUCION.forEach(c => {
+                const g = c.tipo_general || 'OTRO';
+                if (!groups[g]) groups[g] = [];
+                groups[g].push(c);
+            });
+            let html = '<option value="">Seleccionar...</option>';
+            Object.keys(groups).sort().forEach(g => {
+                html += `<optgroup label="${g}">`;
+                groups[g].forEach(c => {
+                    html += `<option value="${c.codigo}">${c.codigo} - ${c.descripcion}</option>`;
+                });
+                html += '</optgroup>';
+            });
+            return html;
+        }
+
+        async function loadStats() {
+            try {
+                const resp = await fetch(`${API_URL}/api/resoluciones/stats`);
+                const data = await resp.json();
+                document.getElementById('statRevision').textContent = (data.pendientes_revision || 0).toLocaleString();
+
+                const anioSelect = document.getElementById('anio');
+                if (data.por_anio && data.por_anio.length > 0) {
+                    data.por_anio.forEach(item => {
+                        if (item.anio) anioSelect.innerHTML += `<option value="${item.anio}">${item.anio}</option>`;
+                    });
+                }
+            } catch (error) {
+                console.error('Error cargando stats:', error);
+            }
+        }
+
+        async function search(e) {
+            if (e) e.preventDefault();
+            const resolucion = document.getElementById('resolucion').value.trim();
+            const anio = document.getElementById('anio').value;
+            const soloPendientes = document.getElementById('soloPendientes').value;
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Buscando...</p></div>';
+
+            try {
+                const params = new URLSearchParams();
+                if (resolucion) params.append('resolucion', resolucion);
+                if (anio) params.append('anio', anio);
+                params.append('solo_pendientes', soloPendientes);
+
+                const resp = await fetch(`${API_URL}/api/resoluciones/huerfanas?${params}`);
+                const data = await resp.json();
+
+                document.getElementById('statTotal').textContent = data.total.toLocaleString();
+
+                if (data.total === 0) {
+                    container.innerHTML = '<div class="loading"><p>No se encontraron resoluciones pendientes</p></div>';
+                    return;
+                }
+
+                let html = `<p style="margin-bottom:1rem;color:var(--text-secondary)">Encontradas: <strong>${data.total}</strong> resoluciones</p>`;
+                html += '<table><thead><tr><th>Resolucion</th><th>Anio</th><th>Estado</th><th>Novedades</th><th>Motivo</th><th>Accion</th></tr></thead><tbody>';
+
+                data.huerfanas.forEach(h => {
+                    const estado = h.requiere_revision_humana
+                        ? '<span class="badge badge-error">REVISION</span>'
+                        : (h.num_novedades === 0 ? '<span class="badge badge-orphan">SIN NOVEDADES</span>' : `<span class="badge badge-info">${h.codigo || 'PEND'}</span>`);
+                    const motivo = h.motivo_revision || (h.num_novedades === 0 ? 'Sin novedades extraidas' : '-');
+                    const pdfLink = h.ruta_completa ? `<a class="pdf-link" href="/pdf/${encodeURIComponent(h.ruta_completa)}" target="_blank">PDF</a>` : '';
+
+                    html += `<tr>
+                        <td><strong>${h.numero_resolucion || '-'}</strong></td>
+                        <td>${h.anio || '-'}</td>
+                        <td>${estado}</td>
+                        <td>${h.num_novedades || 0}</td>
+                        <td class="text-preview">${motivo}</td>
+                        <td>${pdfLink} <button class="btn-review" onclick="openReview(${h.id})">Corregir</button></td>
+                    </tr>`;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error en busqueda:', error);
+                container.innerHTML = '<div class="loading"><p>Error al buscar</p></div>';
+            }
+        }
+
+        async function openReview(resolucionId) {
+            currentResolucionId = resolucionId;
+            const modal = document.getElementById('modalOverlay');
+            const content = document.getElementById('modalContent');
+            content.innerHTML = '<div class="loading"><div class="spinner"></div><p>Cargando...</p></div>';
+            modal.classList.add('active');
+
+            try {
+                const resp = await fetch(`${API_URL}/api/resoluciones/${resolucionId}`);
+                const data = await resp.json();
+
+                if (data.error) {
+                    content.innerHTML = `<div class="alert alert-error">${data.error}</div>`;
+                    return;
+                }
+
+                const r = data.resolucion;
+                currentOcrText = r.contenido_texto || '';
+                document.getElementById('modalTitle').textContent = `Corregir Resolucion ${r.numero_resolucion || '-'} de ${r.anio || '-'}`;
+
+                const pdfLink = r.ruta_completa
+                    ? `<a class="pdf-link" href="/pdf/${encodeURIComponent(r.ruta_completa)}" target="_blank" style="font-size:1rem;">Ver PDF</a>`
+                    : '';
+
+                let html = `
+                    <div style="margin-bottom:1rem;">
+                        ${pdfLink}
+                        <span style="margin-left:1rem;color:var(--text-secondary)">| Archivo: ${r.archivo_origen || 'N/A'} | Autoridad: ${r.autoridad_firma || 'N/A'}</span>
+                    </div>
+
+                    <div class="two-columns">
+                        <div>
+                            <h4 style="margin-bottom:0.5rem;color:var(--accent)">Texto OCR Extraido</h4>
+                            <div class="ocr-text" id="ocrTextDisplay">${r.contenido_texto || 'No hay texto disponible'}</div>
+                        </div>
+
+                        <div class="correction-form">
+                            <h4>Correccion Manual</h4>
+
+                            <div id="alertContainer"></div>
+                            <div id="validationResult"></div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Codigo Novedad *</label>
+                                    <select id="codigoNovedad" onchange="updateTipoNovedad()">
+                                        ${buildCodigosOptions()}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tipo Novedad</label>
+                                    <input type="text" id="tipoNovedad" placeholder="Descripcion...">
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom:1rem;">
+                                <label>Razonamiento (analizado por IA)</label>
+                                <textarea id="razonamiento" rows="2" style="width:100%;padding:0.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);resize:vertical;" placeholder="Explica brevemente por que este codigo..."></textarea>
+                            </div>
+
+                            <div style="margin-bottom:1rem;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <h5>Funcionarios</h5>
+                                    <button type="button" class="btn btn-success" onclick="addFuncionario()" style="padding:0.4rem 0.8rem;font-size:0.8rem;">+ Agregar</button>
+                                </div>
+                            </div>
+
+                            <div id="funcionariosContainer"></div>
+
+                            <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+                                <button type="button" class="btn btn-warning" onclick="validateWithAI()" style="flex:1;">
+                                    Validar con IA
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="saveCorrection()" style="flex:1;">
+                                    Guardar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                content.innerHTML = html;
+            } catch (error) {
+                console.error('Error cargando resolucion:', error);
+                content.innerHTML = '<div class="alert alert-error">Error al cargar resolucion</div>';
+            }
+        }
+
+        function updateTipoNovedad() {
+            const codigo = document.getElementById('codigoNovedad').value;
+            const found = CODIGOS_RESOLUCION.find(c => c.codigo === codigo);
+            if (found) document.getElementById('tipoNovedad').value = found.descripcion;
+        }
+
+        function addFuncionario(preloadData = null) {
+            funcionarioCount++;
+            const container = document.getElementById('funcionariosContainer');
+            const funcId = funcionarioCount;
+
+            const html = `
+                <div class="funcionario-entry" id="func${funcId}">
+                    <div class="funcionario-header">
+                        <strong>Funcionario ${funcId}</strong>
+                        <button type="button" class="btn-remove" onclick="removeFuncionario(${funcId})">x</button>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Cedula <button type="button" onclick="searchFuncionario(${funcId})" style="font-size:0.7rem;padding:0.2rem 0.4rem;background:var(--accent);color:white;border:none;border-radius:4px;cursor:pointer;">Buscar</button></label>
+                            <input type="text" class="func-cedula" id="funcCedula${funcId}" placeholder="Sin puntos..." value="${preloadData?.cedula || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Nombre Completo</label>
+                            <input type="text" class="func-nombre" id="funcNombre${funcId}" placeholder="NOMBRES APELLIDOS" value="${preloadData?.nombre_completo || ''}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Cargo</label>
+                            <input type="text" class="func-cargo" id="funcCargo${funcId}" placeholder="Ej: Profesional Universitario" value="${preloadData?.cargo || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Dependencia</label>
+                            <input type="text" class="func-dependencia" id="funcDep${funcId}" placeholder="Procuraduria Regional..." value="${preloadData?.dependencia || ''}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Dias Otorgados</label>
+                            <input type="number" class="func-dias" id="funcDias${funcId}" placeholder="Ej: 15" value="${preloadData?.dias_otorgados || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Es Remunerada</label>
+                            <select class="func-remunerada" id="funcRemunerada${funcId}">
+                                <option value="">N/A</option>
+                                <option value="true" ${preloadData?.es_remunerada === true ? 'selected' : ''}>Si</option>
+                                <option value="false" ${preloadData?.es_remunerada === false ? 'selected' : ''}>No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fecha Inicio</label>
+                            <input type="text" class="func-fecha-inicio" id="funcFechaInicio${funcId}" placeholder="Ej: 1 de enero de 2024" value="${preloadData?.fecha_inicio_texto || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha Fin</label>
+                            <input type="text" class="func-fecha-fin" id="funcFechaFin${funcId}" placeholder="Ej: 15 de enero de 2024" value="${preloadData?.fecha_fin_texto || ''}">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0.5rem;">
+                        <label>Motivo</label>
+                        <input type="text" class="func-motivo" id="funcMotivo${funcId}" placeholder="Motivo de la novedad..." value="${preloadData?.motivo || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Accion/Observacion</label>
+                        <input type="text" class="func-accion" id="funcAccion${funcId}" placeholder="Lo que dice la resolucion..." value="${preloadData?.accion || ''}">
+                    </div>
+                    <div id="funcSearchResult${funcId}" style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.5rem;"></div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        async function searchFuncionario(funcId) {
+            const cedula = document.getElementById(`funcCedula${funcId}`).value.replace(/\./g, '').trim();
+            const resultDiv = document.getElementById(`funcSearchResult${funcId}`);
+
+            if (!cedula) {
+                resultDiv.innerHTML = '<span style="color:var(--danger)">Ingresa una cedula primero</span>';
+                return;
+            }
+            resultDiv.innerHTML = '<span style="color:var(--accent)">Buscando...</span>';
+
+            try {
+                const resp = await fetch(`${API_URL}/api/buscar_funcionario?cedula=${cedula}`);
+                const data = await resp.json();
+
+                if (data.encontrados > 0) {
+                    const func = data.funcionarios[0];
+                    document.getElementById(`funcNombre${funcId}`).value = func.nombre_completo || '';
+                    document.getElementById(`funcCargo${funcId}`).value = func.cargo || '';
+                    document.getElementById(`funcDep${funcId}`).value = func.dependencia || '';
+                    resultDiv.innerHTML = `<span style="color:var(--success)">Encontrado: ${func.nombre_completo} (ya existe en BD)</span>`;
+                } else {
+                    resultDiv.innerHTML = '<span style="color:var(--warning)">No encontrado - se creara nuevo funcionario</span>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span style="color:var(--danger)">Error: ${error.message}</span>`;
+            }
+        }
+
+        function removeFuncionario(id) {
+            document.getElementById('func' + id).remove();
+        }
+
+        async function validateWithAI() {
+            const alertContainer = document.getElementById('alertContainer');
+            const validationResult = document.getElementById('validationResult');
+
+            const codigoNovedad = document.getElementById('codigoNovedad').value;
+            const tipoNovedad = document.getElementById('tipoNovedad').value;
+            const razonamiento = document.getElementById('razonamiento').value;
+
+            if (!codigoNovedad) {
+                alertContainer.innerHTML = '<div class="alert alert-error">Selecciona un codigo de novedad primero</div>';
+                return;
+            }
+
+            const funcionarios = [];
+            document.querySelectorAll('.funcionario-entry').forEach(entry => {
+                const cedula = entry.querySelector('.func-cedula').value.trim();
+                const nombre = entry.querySelector('.func-nombre').value.trim();
+                if (cedula || nombre) funcionarios.push({ cedula, nombre_completo: nombre });
+            });
+
+            validationResult.innerHTML = '<div style="padding:1rem;background:rgba(14,165,233,0.1);border-radius:8px;"><div class="spinner" style="width:24px;height:24px;margin:0 auto;"></div><p style="text-align:center;color:var(--accent);margin-top:0.5rem;">Analizando con IA...</p></div>';
+
+            try {
+                const resp = await fetch(`${API_URL}/api/validar_correccion/resolucion`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        texto_ocr: currentOcrText,
+                        codigo_novedad: codigoNovedad,
+                        tipo_novedad: tipoNovedad,
+                        razonamiento: razonamiento,
+                        funcionarios: funcionarios
+                    })
+                });
+
+                const data = await resp.json();
+
+                if (data.success) {
+                    const v = data.validacion;
+                    const bgColor = v.codigo_valido ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)';
+                    const borderColor = v.codigo_valido ? 'var(--success)' : 'var(--danger)';
+
+                    let html = `<div style="padding:1rem;background:${bgColor};border:1px solid ${borderColor};border-radius:8px;margin-bottom:1rem;">`;
+                    html += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">`;
+                    html += `<strong style="color:${borderColor}">${v.codigo_valido ? 'Codigo valido' : 'Revisar codigo'}</strong>`;
+                    html += `<span style="font-size:0.8rem;color:var(--text-secondary)">Confianza: ${((v.confianza || 0) * 100).toFixed(0)}% | Modelo: ${data.modelo || '?'}</span>`;
+                    html += `</div>`;
+
+                    if (v.codigo_sugerido && !v.codigo_valido) {
+                        html += `<p style="color:var(--warning)">Codigo sugerido: <strong>${v.codigo_sugerido}</strong> (${v.tipo_sugerido || ''})</p>`;
+                    }
+
+                    if (v.observaciones) html += `<p style="font-size:0.9rem;margin-top:0.5rem;">${v.observaciones}</p>`;
+
+                    if (v.correcciones_ocr && v.correcciones_ocr.length > 0) {
+                        html += `<div style="margin-top:0.5rem;padding:0.5rem;background:rgba(245,158,11,0.1);border-radius:4px;">`;
+                        html += `<strong style="font-size:0.8rem;color:var(--warning)">Posibles errores OCR:</strong>`;
+                        html += `<ul style="margin:0.25rem 0 0 1rem;font-size:0.85rem;">`;
+                        v.correcciones_ocr.forEach(c => html += `<li>${c}</li>`);
+                        html += `</ul></div>`;
+                    }
+
+                    if (v.razonamiento_mejorado) {
+                        html += `<div style="margin-top:0.5rem;padding:0.5rem;background:rgba(59,130,246,0.1);border-radius:4px;">`;
+                        html += `<strong style="font-size:0.8rem;color:#3b82f6;">Razonamiento mejorado:</strong>`;
+                        html += `<p style="font-size:0.85rem;margin-top:0.25rem;">${v.razonamiento_mejorado}</p>`;
+                        html += `<button onclick="document.getElementById('razonamiento').value=window.razonamientoMejorado" style="font-size:0.75rem;padding:0.2rem 0.5rem;background:#3b82f6;color:white;border:none;border-radius:4px;cursor:pointer;margin-top:0.5rem;">Usar este razonamiento</button>`;
+                        html += `</div>`;
+                        window.razonamientoMejorado = v.razonamiento_mejorado;
+                    }
+
+                    if (v.funcionarios_extraidos && v.funcionarios_extraidos.length > 0) {
+                        window.funcionariosIA = v.funcionarios_extraidos;
+                        html += `<div style="margin-top:0.5rem;padding:0.5rem;background:rgba(16,185,129,0.15);border:1px solid var(--success);border-radius:4px;">`;
+                        html += `<strong style="font-size:0.8rem;color:var(--success);">${v.funcionarios_extraidos.length} Funcionario(s) extraido(s):</strong>`;
+                        html += `<ul style="margin:0.25rem 0 0 1rem;font-size:0.85rem;">`;
+                        v.funcionarios_extraidos.forEach(f => {
+                            html += `<li><strong>${f.nombre_completo}</strong> (CC: ${f.cedula}) - ${f.cargo || ''} ${f.dias_otorgados ? '| Dias: ' + f.dias_otorgados : ''}</li>`;
+                        });
+                        html += `</ul>`;
+                        html += `<button onclick="loadFuncionariosFromAI()" style="font-size:0.8rem;padding:0.4rem 0.8rem;background:var(--success);color:white;border:none;border-radius:6px;cursor:pointer;margin-top:0.5rem;width:100%;">Cargar funcionario(s) al formulario</button>`;
+                        html += `</div>`;
+                    }
+
+                    if (data.alertas_cedula && data.alertas_cedula.length > 0) {
+                        const alertasW = data.alertas_cedula.filter(a => a.nivel === 'warning');
+                        const alertasI = data.alertas_cedula.filter(a => a.nivel === 'info' && a.tipo !== 'CEDULA_NUEVA');
+
+                        if (alertasW.length > 0) {
+                            html += `<div style="margin-top:0.5rem;padding:0.8rem;background:rgba(239,68,68,0.15);border:2px solid var(--danger);border-radius:8px;">`;
+                            html += `<strong style="font-size:0.9rem;color:var(--danger);">ALERTAS DE INTEGRIDAD:</strong><ul style="margin:0.5rem 0 0 1rem;font-size:0.85rem;">`;
+                            alertasW.forEach(a => {
+                                html += `<li style="margin-bottom:0.5rem;"><div style="color:var(--danger);">${a.mensaje}</div><div style="color:var(--warning);font-style:italic;font-size:0.8rem;">${a.sugerencia}</div></li>`;
+                            });
+                            html += `</ul></div>`;
+                        }
+                        if (alertasI.length > 0) {
+                            html += `<div style="margin-top:0.5rem;padding:0.5rem;background:rgba(14,165,233,0.1);border:1px solid var(--accent);border-radius:6px;">`;
+                            html += `<strong style="font-size:0.8rem;color:var(--accent);">Notas sobre cedulas:</strong><ul style="margin:0.25rem 0 0 1rem;font-size:0.8rem;">`;
+                            alertasI.forEach(a => html += `<li>${a.mensaje}</li>`);
+                            html += `</ul></div>`;
+                        }
+                    }
+
+                    html += `</div>`;
+                    validationResult.innerHTML = html;
+                } else {
+                    validationResult.innerHTML = `<div class="alert alert-error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                validationResult.innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+            }
+        }
+
+        function loadFuncionariosFromAI() {
+            if (!window.funcionariosIA || window.funcionariosIA.length === 0) return;
+            document.getElementById('funcionariosContainer').innerHTML = '';
+            funcionarioCount = 0;
+            window.funcionariosIA.forEach(func => {
+                addFuncionario({
+                    cedula: func.cedula || '',
+                    nombre_completo: func.nombre_completo || '',
+                    cargo: func.cargo || '',
+                    dependencia: func.dependencia || '',
+                    accion: func.accion || '',
+                    dias_otorgados: func.dias_otorgados || '',
+                    motivo: func.motivo || '',
+                    es_remunerada: func.es_remunerada,
+                    fecha_inicio_texto: func.fecha_inicio_texto || '',
+                    fecha_fin_texto: func.fecha_fin_texto || ''
+                });
+            });
+            document.getElementById('alertContainer').innerHTML = `<div class="alert alert-success">Cargados ${window.funcionariosIA.length} funcionario(s). Puedes modificar antes de guardar.</div>`;
+        }
+
+        async function saveCorrection() {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = '';
+
+            const codigoNovedad = document.getElementById('codigoNovedad').value;
+            const tipoNovedad = document.getElementById('tipoNovedad').value;
+            const razonamiento = document.getElementById('razonamiento').value;
+
+            if (!codigoNovedad) {
+                alertContainer.innerHTML = '<div class="alert alert-error">Selecciona un codigo de novedad</div>';
+                return;
+            }
+
+            const funcionarios = [];
+            document.querySelectorAll('.funcionario-entry').forEach(entry => {
+                const cedula = entry.querySelector('.func-cedula').value.trim().replace(/\./g, '');
+                const nombre = entry.querySelector('.func-nombre').value.trim();
+                const cargo = entry.querySelector('.func-cargo').value.trim();
+                const dependencia = entry.querySelector('.func-dependencia').value.trim();
+                const accion = entry.querySelector('.func-accion').value.trim();
+                const dias = entry.querySelector('.func-dias').value;
+                const motivo = entry.querySelector('.func-motivo').value.trim();
+                const remunerada = entry.querySelector('.func-remunerada').value;
+                const fechaInicio = entry.querySelector('.func-fecha-inicio').value.trim();
+                const fechaFin = entry.querySelector('.func-fecha-fin').value.trim();
+
+                if (cedula || nombre) {
+                    funcionarios.push({
+                        cedula: cedula,
+                        nombre_completo: nombre,
+                        nombres: nombre.split(' ').slice(0, 2).join(' '),
+                        apellidos: nombre.split(' ').slice(2).join(' '),
+                        cargo: cargo,
+                        dependencia: dependencia,
+                        accion: accion,
+                        dias_otorgados: dias ? parseInt(dias) : null,
+                        motivo: motivo,
+                        es_remunerada: remunerada === '' ? null : remunerada === 'true',
+                        fecha_inicio_texto: fechaInicio,
+                        fecha_fin_texto: fechaFin
+                    });
+                }
+            });
+
+            try {
+                const resp = await fetch(`${API_URL}/api/corregir/resolucion`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        resolucion_id: currentResolucionId,
+                        codigo_novedad: codigoNovedad,
+                        tipo_novedad: tipoNovedad,
+                        funcionarios: funcionarios,
+                        razonamiento: razonamiento
+                    })
+                });
+
+                const data = await resp.json();
+
+                if (data.success) {
+                    alertContainer.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                    setTimeout(() => { closeModal(); search(); }, 1500);
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${data.error}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            funcionarioCount = 0;
+        }
+
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+
+        document.getElementById('searchForm').addEventListener('submit', search);
+
+        // Init
+        loadCodigosResolucion();
+        loadStats();
+        search();
+    </script>
+</body>
+</html>

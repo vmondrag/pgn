@@ -1,0 +1,83 @@
+REPORTE DE VALIDACIÓN - PDFs AÑO 2009
+====================================================================================================
+
+DECRETO 001-2009.pdf
+  Tamaño: 79,344 bytes
+  Header: OK
+  fitz: OK
+  PyPDF2: OK
+  pdfplumber: ERROR
+  Páginas: 1
+
+DECRETO 002-2009.pdf
+  Tamaño: 70,162 bytes
+  Header: OK
+  fitz: OK
+  PyPDF2: OK
+  pdfplumber: ERROR
+  Páginas: 1
+
+DECRETO 003 2009.pdf
+  Tamaño: 71,701 bytes
+  Header: OK
+  fitz: OK
+  PyPDF2: OK
+  pdfplumber: ERROR
+  Páginas: 1
+
+DECRETO 004-2009.pdf
+  Tamaño: 69,986 bytes
+  Header: OK
+  fitz: OK
+  PyPDF2: OK
+  pdfplumber: ERROR
+  Páginas: 1
+
+DECRETO 005-2009.pdf
+  Tamaño: 72,657 bytes
+  Header: OK
+  fitz: OK
+  PyPDF2: OK
+  pdfplumber: ERROR
+  Páginas: 1
+
+DECRETO 006-2009.pdf
+  Tamaño: 69,701 bytes
+  Header: OK
+  fitz: OK
+  PyPDF2: OK
+  pdfplumber: ERROR
+  Páginas: 1
+
+DECRETO 007-2009.pdf
+  Tamaño: 70,021 bytes
+  Header: OK
+  fitz: OK
+  PyPDF2: OK
+  pdfplumber: ERROR
+  Páginas: 1
+
+DECRETO 008-2009.pdf
+  Tamaño: 828,257 bytes
+  Header: OK
+  fitz: OK
+  PyPDF2: OK
+  pdfplumber: ERROR
+  Páginas: 1
+
+DECRETO 009-2009.pdf
+  Tamaño: 70,866 bytes
+  Header: OK
+  fitz: OK
+  PyPDF2: OK
+  pdfplumber: ERROR
+  Páginas: 1
+
+DECRETO 010-2009.pdf
+  Tamaño: 69,244 bytes
+  Header: OK
+  fitz: OK
+  PyPDF2: OK
+  pdfplumber: ERROR
+  Páginas: 1
+

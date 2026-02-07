@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Resoluciones - PGN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-light: #8b5cf6;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --gradient-1: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+            --gradient-2: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 500;
+            border: 2px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: var(--gradient-1);
+            color: white;
+            border-color: transparent;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--gradient-1);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .search-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .search-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        @media (max-width: 1200px) {
+            .search-form {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+        }
+
+        .results-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-count {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .results-count strong {
+            color: var(--accent);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-dark);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        tr:hover td {
+            background: var(--bg-hover);
+        }
+
+        td {
+            font-size: 0.95rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-licencia {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .badge-comision {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .badge-prorroga {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .badge-vacaciones {
+            background: rgba(14, 165, 233, 0.2);
+            color: #0ea5e9;
+        }
+
+        .badge-otro {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+        }
+
+        .badge-revision {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .cedula-link {
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .cedula-link:hover {
+            text-decoration: underline;
+        }
+
+        .pdf-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .pdf-link:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: scale(1.05);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 1000px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .funcionario-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            background: var(--bg-dark);
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-title.decretos {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .section-title.resoluciones {
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+
+        .timeline {
+            padding: 1rem 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-left: 2px solid var(--border);
+            margin-left: 1rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .timeline-item.decreto::before {
+            background: #3b82f6;
+        }
+
+        .timeline-item.resolucion::before {
+            background: #8b5cf6;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .observaciones-box {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid var(--success);
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .razonamiento-box {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(124, 58, 237, 0.1);
+            border-left: 3px solid var(--primary);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        .source-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .source-decreto {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .source-resolucion {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-tab {
+            padding: 0.5rem 1rem;
+            background: var(--bg-dark);
+            border: none;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .modal-tab:hover {
+            background: var(--bg-hover);
+        }
+
+        .modal-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <nav class="nav-tabs">
+            <a href="/" class="nav-tab">Decretos</a>
+            <a href="/resoluciones" class="nav-tab active">Resoluciones</a>
+            <a href="/expediente" class="nav-tab"
+                style="background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%); color: white; border-color: transparent;">📁
+                Expediente IA</a>
+        </nav>
+
+        <header class="header">
+            <h1>Consulta de Resoluciones PGN</h1>
+            <p>Procuraduria General de la Nacion - Sistema de Consulta de Resoluciones Administrativas</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="statResoluciones">-</div>
+                <div class="stat-label">Resoluciones Procesadas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statFuncionarios">-</div>
+                <div class="stat-label">Funcionarios</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statNovedades">-</div>
+                <div class="stat-label">Novedades Registradas</div>
+            </div>
+            <a href="/resoluciones/huerfanas" class="stat-card" style="text-decoration:none; cursor:pointer;">
+                <div class="stat-value" id="statHuerfanas" style="color:#f59e0b;">-</div>
+                <div class="stat-label">Pendientes Revision</div>
+            </a>
+        </div>
+
+        <section class="search-section">
+            <h2 class="search-title">Buscar Resoluciones</h2>
+            <form class="search-form" id="searchForm">
+                <div class="form-group">
+                    <label for="resolucion">Resolucion #</label>
+                    <input type="text" id="resolucion" placeholder="Numero resolucion..." autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="cedula">Cedula</label>
+                    <input type="text" id="cedula" placeholder="Numero de cedula..." autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" placeholder="Nombre o apellido..." autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="anio">Anio</label>
+                    <select id="anio">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tipo">Tipo Novedad</label>
+                    <select id="tipo">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+        </section>
+
+        <section class="results-section">
+            <div class="results-header">
+                <h3>Resultados</h3>
+                <span class="results-count" id="resultsCount"></span>
+            </div>
+            <div id="resultsContainer">
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                    <p>Ingrese un criterio de busqueda para ver los resultados</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Historial Completo del Funcionario</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-tabs">
+                <button class="modal-tab active" onclick="switchTab('todos')">Todos</button>
+                <button class="modal-tab" onclick="switchTab('decretos')">Decretos</button>
+                <button class="modal-tab" onclick="switchTab('resoluciones')">Resoluciones</button>
+            </div>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '';
+        let currentHistorial = null;
+
+        async function loadStats() {
+            try {
+                const resp = await fetch(`${API_URL}/api/resoluciones/stats`);
+                const data = await resp.json();
+                document.getElementById('statResoluciones').textContent = data.total_resoluciones.toLocaleString();
+                document.getElementById('statNovedades').textContent = data.total_novedades_resoluciones.toLocaleString();
+                document.getElementById('statFuncionarios').textContent = (data.total_funcionarios || 0).toLocaleString();
+
+                // Cargar anios desde por_anio
+                const anioSelect = document.getElementById('anio');
+                if (data.por_anio && data.por_anio.length > 0) {
+                    data.por_anio.forEach(item => {
+                        if (item.anio) anioSelect.innerHTML += `<option value="${item.anio}">${item.anio} (${item.cantidad})</option>`;
+                    });
+                }
+
+                // Cargar tipos desde por_tipo del mismo endpoint
+                const tipoSelect = document.getElementById('tipo');
+                if (data.por_tipo && data.por_tipo.length > 0) {
+                    data.por_tipo.forEach(t => {
+                        tipoSelect.innerHTML += `<option value="${t.codigo_novedad}">${t.codigo_novedad} - ${t.descripcion || t.codigo_novedad} (${t.total})</option>`;
+                    });
+                }
+
+                // Cargar huerfanas/pendientes
+                document.getElementById('statHuerfanas').textContent = (data.pendientes_revision || 0).toLocaleString();
+            } catch (error) {
+                console.error('Error cargando estadisticas:', error);
+            }
+        }
+
+        async function search(e) {
+            if (e) e.preventDefault();
+
+            const resolucion = document.getElementById('resolucion').value.trim();
+            const cedula = document.getElementById('cedula').value.trim();
+            const nombre = document.getElementById('nombre').value.trim();
+            const anio = document.getElementById('anio').value;
+            const tipo = document.getElementById('tipo').value;
+
+            if (!resolucion && !cedula && !nombre && !anio && !tipo) {
+                alert('Ingrese al menos un criterio de busqueda');
+                return;
+            }
+
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Buscando...</p></div>';
+
+            try {
+                const params = new URLSearchParams();
+                if (resolucion) params.append('resolucion', resolucion);
+                if (cedula) params.append('cedula', cedula);
+                if (nombre) params.append('nombre', nombre);
+                if (anio) params.append('anio', anio);
+                if (tipo) params.append('tipo', tipo);
+
+                const resp = await fetch(`${API_URL}/api/resoluciones/buscar?${params}`);
+                const data = await resp.json();
+
+                document.getElementById('resultsCount').innerHTML = `<strong>${data.total}</strong> resultados encontrados`;
+
+                if (data.total === 0) {
+                    container.innerHTML = '<div class="empty-state"><p>No se encontraron resultados</p></div>';
+                    return;
+                }
+
+                let html = '<div class="table-container"><table><thead><tr><th>Cedula</th><th>Nombre</th><th>Novedad</th><th>Cargo</th><th>Resolucion</th><th>Fecha</th><th>Dias</th><th>PDF</th></tr></thead><tbody>';
+
+                data.resultados.forEach(r => {
+                    const badgeClass = getBadgeClass(r.codigo_novedad);
+                    const pdfPath = r.ruta_completa || r.archivo_origen;
+                    const pdfLink = pdfPath
+                        ? `<a class="pdf-link" href="/pdf/${encodeURIComponent(pdfPath)}" target="_blank">Ver</a>`
+                        : '<span style="color: var(--text-secondary)">-</span>';
+                    const dias = r.dias_otorgados ? `${r.dias_otorgados}` : '-';
+                    const fechaRes = r.fecha_resolucion_texto || r.fecha_resolucion || '-';
+                    const cargo = r.cargo_actual || r.cargo || '-';
+                    html += `<tr>
+                        <td><a class="cedula-link" onclick="showFuncionarioCompleto('${r.cedula}')">${r.cedula || '-'}</a></td>
+                        <td>${r.nombre_completo || '-'}</td>
+                        <td><span class="badge ${badgeClass}">${r.codigo_novedad || '-'}</span> ${r.tipo_novedad || ''}</td>
+                        <td>${cargo}</td>
+                        <td>${r.numero_resolucion || '-'}</td>
+                        <td>${fechaRes}</td>
+                        <td>${dias}</td>
+                        <td>${pdfLink}</td>
+                    </tr>`;
+                });
+
+                html += '</tbody></table></div>';
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error en busqueda:', error);
+                container.innerHTML = '<div class="empty-state"><p>Error al realizar la busqueda</p></div>';
+            }
+        }
+
+        async function showFuncionarioCompleto(cedula) {
+            if (!cedula || cedula === 'null') {
+                alert('No se dispone de cedula para este funcionario');
+                return;
+            }
+
+            const modal = document.getElementById('modalOverlay');
+            const content = document.getElementById('modalContent');
+
+            content.innerHTML = '<div class="loading"><div class="spinner"></div><p>Cargando historial completo...</p></div>';
+            modal.classList.add('active');
+
+            try {
+                // Usar el endpoint unificado
+                const resp = await fetch(`${API_URL}/api/funcionario/${cedula}/completo`);
+                const data = await resp.json();
+
+                if (data.error) {
+                    content.innerHTML = `<div class="empty-state"><p>${data.error}</p></div>`;
+                    return;
+                }
+
+                currentHistorial = data;
+                document.getElementById('modalTitle').textContent = data.funcionario.nombre_completo || 'Funcionario';
+
+                // Reset tabs
+                document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+                document.querySelector('.modal-tab').classList.add('active');
+
+                renderHistorial('todos');
+            } catch (error) {
+                console.error('Error cargando funcionario:', error);
+                content.innerHTML = '<div class="empty-state"><p>Error al cargar el historial</p></div>';
+            }
+        }
+
+        function renderHistorial(filter) {
+            if (!currentHistorial) return;
+
+            const content = document.getElementById('modalContent');
+            const data = currentHistorial;
+            const func = data.funcionario;
+
+            let html = `<div class="funcionario-info">
+                <div class="info-item"><div class="info-label">Cedula</div><div class="info-value">${func.cedula || '-'}</div></div>
+                <div class="info-item"><div class="info-label">Nombre Completo</div><div class="info-value">${func.nombre_completo || '-'}</div></div>
+                <div class="info-item"><div class="info-label">Total Decretos</div><div class="info-value">${data.total_decretos}</div></div>
+                <div class="info-item"><div class="info-label">Total Resoluciones</div><div class="info-value">${data.total_resoluciones}</div></div>
+            </div>`;
+
+            // Combinar y ordenar todas las novedades
+            let todasNovedades = [];
+
+            if (filter === 'todos' || filter === 'decretos') {
+                data.decretos.forEach(d => {
+                    todasNovedades.push({ ...d, source: 'decreto', sortDate: d.anio || 0 });
+                });
+            }
+
+            if (filter === 'todos' || filter === 'resoluciones') {
+                data.resoluciones.forEach(r => {
+                    todasNovedades.push({ ...r, source: 'resolucion', sortDate: r.anio_resolucion || 0 });
+                });
+            }
+
+            // Ordenar por fecha descendente
+            todasNovedades.sort((a, b) => b.sortDate - a.sortDate);
+
+            if (todasNovedades.length === 0) {
+                html += '<div class="empty-state"><p>No hay novedades en esta categoria</p></div>';
+            } else {
+                html += '<div class="timeline">';
+
+                todasNovedades.forEach(n => {
+                    const isDecreto = n.source === 'decreto';
+                    const badgeClass = getBadgeClass(n.codigo_novedad);
+                    const sourceClass = isDecreto ? 'source-decreto' : 'source-resolucion';
+                    const sourceBadge = isDecreto ? 'DECRETO' : 'RESOLUCION';
+                    const timelineClass = isDecreto ? 'decreto' : 'resolucion';
+
+                    let docInfo, dateInfo, pdfPath;
+                    if (isDecreto) {
+                        docInfo = `Decreto ${n.numero_decreto || '-'}`;
+                        dateInfo = n.fecha_decreto_texto || `Anio ${n.anio || '-'}`;
+                        pdfPath = n.ruta_completa;
+                    } else {
+                        docInfo = `Resolucion ${n.numero_resolucion || '-'}`;
+                        dateInfo = n.fecha_resolucion || `Anio ${n.anio_resolucion || '-'}`;
+                        pdfPath = n.archivo;
+                    }
+
+                    const pdfLink = pdfPath
+                        ? `<a class="pdf-link" href="/pdf/${encodeURIComponent(pdfPath)}" target="_blank" style="margin-left: 0.5rem;">Ver PDF</a>`
+                        : '';
+
+                    html += `<div class="timeline-item ${timelineClass}"><div class="timeline-content">
+                        <div class="timeline-date">${docInfo} - ${dateInfo} <span class="source-badge ${sourceClass}">${sourceBadge}</span> ${pdfLink}</div>
+                        <div class="timeline-title"><span class="badge ${badgeClass}">${n.codigo_novedad || '-'}</span> ${n.tipo_novedad || ''}</div>
+                        <div class="timeline-desc">
+                            ${n.cargo_actual || n.cargo ? '<strong>Cargo:</strong> ' + (n.cargo_actual || n.cargo) + '<br>' : ''}
+                            ${n.dependencia ? '<strong>Dependencia:</strong> ' + n.dependencia + '<br>' : ''}
+                            ${n.dias_otorgados ? '<strong>Dias:</strong> ' + n.dias_otorgados + '<br>' : ''}
+                            ${n.fecha_inicio ? '<strong>Periodo:</strong> ' + n.fecha_inicio + (n.fecha_fin ? ' - ' + n.fecha_fin : '') + '<br>' : ''}
+                            ${n.motivo ? '<strong>Motivo:</strong> ' + n.motivo + '<br>' : ''}
+                            ${n.observaciones ? '<div class="observaciones-box"><strong>Observaciones:</strong> ' + n.observaciones + '</div>' : ''}
+                            ${n.razonamiento_llm ? '<div class="razonamiento-box"><strong>Razonamiento LLM:</strong> ' + n.razonamiento_llm + '</div>' : ''}
+                        </div>
+                    </div></div>`;
+                });
+
+                html += '</div>';
+            }
+
+            content.innerHTML = html;
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            renderHistorial(tab);
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            currentHistorial = null;
+        }
+
+        function getBadgeClass(codigo) {
+            const licencias = ['LNR', 'LNRE', 'LLUT', 'LMAT', 'LPAT', 'LNRP', 'LPAR'];
+            const comisiones = ['CESP', 'CSER', 'CEST'];
+            const prorrogas = ['PPOS', 'PPRO', 'PVAC'];
+            const vacaciones = ['VAC'];
+
+            if (licencias.includes(codigo)) return 'badge-licencia';
+            if (comisiones.includes(codigo)) return 'badge-comision';
+            if (prorrogas.includes(codigo)) return 'badge-prorroga';
+            if (vacaciones.includes(codigo)) return 'badge-vacaciones';
+            if (codigo === 'PENDIENTE_REVISION') return 'badge-revision';
+            return 'badge-otro';
+        }
+
+        document.getElementById('searchForm').addEventListener('submit', search);
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+
+        loadStats();
+    </script>
+</body>
+
+</html>

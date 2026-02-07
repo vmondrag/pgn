@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expediente Electrónico - PGN</title>
+    <style>
+        :root {
+            --primary: #1a56db;
+            --primary-dark: #1e429f;
+            --success: #047857;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --bg-dark: #111827;
+            --bg-card: #1f2937;
+            --text: #f9fafb;
+            --text-muted: #9ca3af;
+            --border: #374151;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1e293b 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1 span {
+            color: var(--primary);
+        }
+
+        .search-box {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .search-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        input,
+        select,
+        textarea {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.3);
+        }
+
+        input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        select {
+            min-width: 150px;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 86, 219, 0.4);
+        }
+
+        .nivel-badges {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-metadata {
+            background: #059669;
+        }
+
+        .badge-fulltext {
+            background: #2563eb;
+        }
+
+        .badge-rag {
+            background: #7c3aed;
+        }
+
+        .results {
+            display: grid;
+            gap: 16px;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .result-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .decreto-num {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .func-name {
+            font-size: 1rem;
+            color: var(--text);
+            margin-top: 4px;
+        }
+
+        .cedula {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .novedad-tipo {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .tipo-N {
+            background: #065f46;
+        }
+
+        .tipo-E {
+            background: #1e40af;
+        }
+
+        .tipo-R {
+            background: #7f1d1d;
+        }
+
+        .tipo-C {
+            background: #92400e;
+        }
+
+        .pdf-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .pdf-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+        }
+
+        .expedientes-box {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+            border: 1px solid #2563eb;
+        }
+
+        .expediente-link {
+            display: block;
+            padding: 12px;
+            background: rgba(37, 99, 235, 0.2);
+            border-radius: 8px;
+            margin-top: 12px;
+            color: #93c5fd;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .expediente-link:hover {
+            background: rgba(37, 99, 235, 0.4);
+        }
+
+        /* RAG Chat Interface */
+        .rag-chat {
+            background: linear-gradient(135deg, #4c1d95 0%, #1e293b 100%);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+            border: 1px solid #7c3aed;
+        }
+
+        .rag-chat h3 {
+            color: #c4b5fd;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-messages {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .chat-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .chat-message.user {
+            background: rgba(37, 99, 235, 0.3);
+            text-align: right;
+        }
+
+        .chat-message.assistant {
+            background: rgba(124, 58, 237, 0.3);
+            white-space: pre-wrap;
+        }
+
+        .chat-message.error {
+            background: rgba(220, 38, 38, 0.3);
+            color: #fca5a5;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .chat-input-row textarea {
+            flex: 1;
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .chat-status {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 16px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .loader {
+            display: none;
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            background: var(--bg-card);
+            color: var(--text-muted);
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            border: 2px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-dark);
+            color: var(--text);
+            border-color: var(--primary);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .integridad {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .integridad.ok {
+            color: var(--success);
+        }
+
+        .integridad.fail {
+            color: var(--danger);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <nav class="nav-tabs">
+            <a href="/" class="nav-tab">📜 Decretos</a>
+            <a href="/resoluciones" class="nav-tab">📋 Resoluciones</a>
+            <a href="/expediente" class="nav-tab active">📁 Expediente IA</a>
+        </nav>
+    </div>
+
+    <header>
+        <div class="container">
+            <h1>📁 <span>Expediente Electrónico</span> con IA</h1>
+            <nav class="nav-links">
+                <a href="#" onclick="mostrarTRD()">📋 TRD</a>
+                <a href="#" onclick="listarExpedientes()">📂 Expedientes</a>
+                <a href="#" onclick="abrirChatRAG()" style="color: #c4b5fd;">🤖 Chat IA</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="search-box">
+            <h2 style="margin-bottom: 16px;">🔍 Búsqueda Inteligente Multinivel</h2>
+            <form onsubmit="buscar(event)">
+                <div class="search-row">
+                    <input type="text" id="query" placeholder="Buscar por cédula, nombre, decreto o texto libre...">
+                    <select id="nivel">
+                        <option value="auto">🔄 Auto (3 niveles)</option>
+                        <option value="1">1️⃣ Metadata</option>
+                        <option value="2">2️⃣ Fulltext (OCR)</option>
+                        <option value="3">3️⃣ RAG (IA)</option>
+                    </select>
+                    <input type="text" id="anio" placeholder="Año" style="max-width: 100px;">
+                    <button type="submit">Buscar</button>
+                    <div class="loader" id="loader"></div>
+                </div>
+            </form>
+            <div class="nivel-badges">
+                <span class="badge badge-metadata">Nivel 1: Metadata</span>
+                <span class="badge badge-fulltext">Nivel 2: Fulltext</span>
+                <span class="badge badge-rag">Nivel 3: RAG (Azure OpenAI)</span>
+            </div>
+        </div>
+
+        <div class="stats" id="stats" style="display: none;"></div>
+
+        <!-- RAG Chat Interface -->
+        <div class="rag-chat" id="rag-chat" style="display: none;">
+            <h3>🤖 Chat con NOVED-IA <small style="color: var(--text-muted);">(Azure OpenAI + index-2026-v7)</small>
+            </h3>
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input-row">
+                <textarea id="chat-input" placeholder="Escribe tu pregunta sobre novedades..."
+                    onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();enviarChat();}"></textarea>
+                <button onclick="enviarChat()">Enviar</button>
+            </div>
+            <div class="chat-status" id="chat-status">Conectado a: Azure OpenAI gpt-4.1 | Índice: index-2026-v7 | Máx.
+                referencias: 20</div>
+        </div>
+
+        <div id="expedientes-relacionados"></div>
+        <div id="rag-response"></div>
+        <div class="results" id="results"></div>
+        <div id="expediente-detalle"></div>
+    </main>
+
+    <script>
+        let chatHistory = [];
+
+        async function buscar(e) {
+            e.preventDefault();
+            const query = document.getElementById('query').value;
+            const nivel = document.getElementById('nivel').value;
+            const anio = document.getElementById('anio').value;
+
+            if (!query && !anio) {
+                alert('Ingrese un criterio de búsqueda');
+                return;
+            }
+
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('expedientes-relacionados').innerHTML = '';
+            document.getElementById('rag-response').innerHTML = '';
+            document.getElementById('expediente-detalle').innerHTML = '';
+
+            const params = new URLSearchParams({ query, nivel });
+            if (anio) params.append('anio', anio);
+
+            try {
+                const res = await fetch(`/api/expediente/buscar?${params}`);
+                const data = await res.json();
+
+                // Stats
+                document.getElementById('stats').style.display = 'flex';
+                document.getElementById('stats').innerHTML = `
+                    <div class="stat">📊 ${data.total_resultados} resultados</div>
+                    <div class="stat">🔍 Niveles: ${data.niveles_ejecutados.join(', ') || 'ninguno'}</div>
+                `;
+
+                // Results with PDF icons
+                const resultsHtml = data.resultados.map(r => `
+                    <div class="result-card">
+                        <div class="result-header">
+                            <div>
+                                <div class="decreto-num">Decreto ${r.numero_decreto || 'S/N'}-${r.anio || ''}</div>
+                                <div class="func-name">${r.nombre_completo || 'Sin funcionario'}</div>
+                                <div class="cedula">CC: ${r.cedula || 'N/A'} | ${r.dependencia || ''}</div>
+                                ${r.ruta_completa ? `
+                                    <a href="/pdf/${encodeURIComponent(r.ruta_completa)}" 
+                                       class="pdf-link" target="_blank" 
+                                       onclick="event.stopPropagation();">
+                                        📄 Ver PDF Original
+                                    </a>
+                                ` : ''}
+                            </div>
+                            <div>
+                                <span class="novedad-tipo tipo-${r.codigo_novedad}">${r.codigo_novedad} - ${r.tipo_novedad || ''}</span>
+                                <div class="badge badge-${r.nivel_busqueda}" style="margin-top: 8px;">${r.nivel_busqueda}</div>
+                            </div>
+                        </div>
+                        ${r.snippet ? `<div style="color: var(--text-muted); font-size: 0.9rem;">${r.snippet}...</div>` : ''}
+                    </div>
+                `).join('');
+                document.getElementById('results').innerHTML = resultsHtml;
+
+                // Expedientes relacionados
+                if (data.expedientes_relacionados?.length) {
+                    const expHtml = `
+                        <div class="expedientes-box">
+                            <h3>📂 Expedientes Electrónicos Relacionados</h3>
+                            ${data.expedientes_relacionados.map(e => `
+                                <a href="#" class="expediente-link" onclick="verExpediente('${e.codigo_expediente}')">
+                                    <strong>${e.codigo_expediente}</strong> - ${e.asunto}
+                                    <br><small>${e.funcionario_responsable} | Estado: ${e.estado}</small>
+                                </a>
+                            `).join('')}
+                        </div>
+                    `;
+                    document.getElementById('expedientes-relacionados').innerHTML = expHtml;
+                }
+
+                // RAG response with chat option
+                if (data.rag_response) {
+                    let ragHtml = '<div class="rag-chat">';
+                    ragHtml += `<h3>🤖 Respuesta IA (${data.rag_response.modelo || 'Azure OpenAI'})</h3>`;
+
+                    if (data.rag_response.respuesta) {
+                        ragHtml += `<div class="chat-message assistant">${data.rag_response.respuesta}</div>`;
+                    } else if (data.rag_response.error) {
+                        ragHtml += `<div class="chat-message error">⚠️ ${data.rag_response.error}</div>`;
+                    }
+
+                    ragHtml += `<button onclick="abrirChatRAG('${encodeURIComponent(query)}')" style="margin-top: 12px;">💬 Continuar Chat</button>`;
+                    ragHtml += '</div>';
+                    document.getElementById('rag-response').innerHTML = ragHtml;
+                }
+
+            } catch (err) {
+                document.getElementById('results').innerHTML = `<div style="color: var(--danger);">Error: ${err.message}</div>`;
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+            }
+        }
+
+        function abrirChatRAG(initialQuery = '') {
+            document.getElementById('rag-chat').style.display = 'block';
+            document.getElementById('rag-chat').scrollIntoView({ behavior: 'smooth' });
+
+            if (initialQuery && chatHistory.length === 0) {
+                const decoded = decodeURIComponent(initialQuery);
+                document.getElementById('chat-input').value = `Continúa explicando sobre: ${decoded}`;
+            }
+        }
+
+        async function enviarChat() {
+            const input = document.getElementById('chat-input');
+            const query = input.value.trim();
+            if (!query) return;
+
+            const messagesDiv = document.getElementById('chat-messages');
+
+            // Add user message
+            messagesDiv.innerHTML += `<div class="chat-message user">${query}</div>`;
+            input.value = '';
+            document.getElementById('chat-status').textContent = '⏳ Consultando Azure OpenAI...';
+
+            chatHistory.push({ role: 'user', content: query });
+
+            try {
+                const res = await fetch('/api/expediente/rag', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: query,
+                        history: chatHistory.slice(-6) // Last 6 messages for context
+                    })
+                });
+                const data = await res.json();
+
+                if (data.respuesta) {
+                    messagesDiv.innerHTML += `<div class="chat-message assistant">${data.respuesta}</div>`;
+                    chatHistory.push({ role: 'assistant', content: data.respuesta });
+                    document.getElementById('chat-status').textContent = `✅ Conectado a: Azure OpenAI ${data.modelo || 'gpt-4.1'} | Índice: index-2026-v7`;
+                } else if (data.error) {
+                    messagesDiv.innerHTML += `<div class="chat-message error">⚠️ ${data.error}</div>`;
+                    document.getElementById('chat-status').textContent = '❌ Error en la conexión';
+                }
+
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            } catch (err) {
+                messagesDiv.innerHTML += `<div class="chat-message error">Error: ${err.message}</div>`;
+                document.getElementById('chat-status').textContent = '❌ Error de conexión';
+            }
+        }
+
+        async function verExpediente(codigo) {
+            document.getElementById('loader').style.display = 'block';
+            try {
+                const res = await fetch(`/api/expediente/${encodeURIComponent(codigo)}`);
+                const data = await res.json();
+
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                const integridadClass = data.verificacion_integridad.integridad_ok ? 'ok' : 'fail';
+                const integridadIcon = data.verificacion_integridad.integridad_ok ? '✅' : '⚠️';
+
+                document.getElementById('expediente-detalle').innerHTML = `
+                    <div class="expedientes-box" style="margin-top: 24px;">
+                        <h2>📁 ${data.expediente.codigo_expediente}</h2>
+                        <p><strong>Asunto:</strong> ${data.expediente.asunto}</p>
+                        <p><strong>Funcionario:</strong> ${data.expediente.funcionario_responsable} (CC ${data.expediente.cedula_funcionario})</p>
+                        <p><strong>Serie TRD:</strong> ${data.expediente.serie_nombre || 'N/A'} (${data.expediente.serie_codigo || ''})</p>
+                        <p><strong>Estado:</strong> ${data.expediente.estado} | Apertura: ${data.expediente.fecha_apertura}</p>
+                        <div class="integridad ${integridadClass}">
+                            ${integridadIcon} Verificación de integridad: ${data.verificacion_integridad.integridad_ok ? 'OK' : 'FALLIDA'}
+                            <small>(Hash: ${data.verificacion_integridad.hash_calculado?.slice(0, 16)}...)</small>
+                        </div>
+                        
+                        <h3 style="margin-top: 20px;">📋 Índice Electrónico (${data.total_documentos} documentos)</h3>
+                        <table style="width: 100%; margin-top: 12px; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--border);">
+                                    <th style="text-align: left; padding: 8px;">Orden</th>
+                                    <th style="text-align: left; padding: 8px;">Decreto</th>
+                                    <th style="text-align: left; padding: 8px;">Fecha</th>
+                                    <th style="text-align: left; padding: 8px;">Tipología</th>
+                                    <th style="text-align: left; padding: 8px;">PDF</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.indice_electronico.map(d => `
+                                    <tr style="border-bottom: 1px solid var(--border);">
+                                        <td style="padding: 8px;">${d.orden}</td>
+                                        <td style="padding: 8px;">${d.numero_decreto || 'S/N'}</td>
+                                        <td style="padding: 8px;">${d.fecha_documento || d.fecha_decreto_texto || ''}</td>
+                                        <td style="padding: 8px;">${d.tipologia_documental || ''}</td>
+                                        <td style="padding: 8px;">
+                                            ${d.ruta_archivo ? `<a href="/pdf/${encodeURIComponent(d.ruta_archivo)}" class="pdf-link" target="_blank">📄</a>` : '-'}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+            }
+        }
+
+        async function verExpedientePorCedula(cedula) {
+            if (!cedula) return;
+            document.getElementById('query').value = cedula;
+            document.getElementById('nivel').value = '1';
+            document.querySelector('form').dispatchEvent(new Event('submit'));
+        }
+
+        async function listarExpedientes() {
+            document.getElementById('loader').style.display = 'block';
+            try {
+                const res = await fetch('/api/expediente/lista');
+                const data = await res.json();
+
+                const html = data.expedientes.map(e => `
+                    <div class="result-card" onclick="verExpediente('${e.codigo_expediente}')">
+                        <div class="decreto-num">${e.codigo_expediente}</div>
+                        <div class="func-name">${e.asunto}</div>
+                        <div class="cedula">${e.funcionario_responsable} | ${e.num_docs} docs | ${e.estado}</div>
+                    </div>
+                `).join('');
+
+                document.getElementById('results').innerHTML = html;
+                document.getElementById('stats').innerHTML = `<div class="stat">📂 ${data.total} expedientes</div>`;
+                document.getElementById('stats').style.display = 'flex';
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+            }
+        }
+
+        async function mostrarTRD() {
+            document.getElementById('loader').style.display = 'block';
+            try {
+                const res = await fetch('/api/trd');
+                const data = await res.json();
+
+                const html = data.series.map(s => `
+                    <div class="result-card">
+                        <div class="decreto-num">${s.codigo}</div>
+                        <div class="func-name">${s.nombre}</div>
+                        <div class="cedula">
+                            Tipo: ${s.tipo_documental || 'N/A'} | 
+                            Acceso: ${s.nivel_acceso} | 
+                            Retención: ${s.tiempo_retencion_archivo_gestion}+${s.tiempo_retencion_archivo_central} años |
+                            Disposición: ${s.disposicion_final}
+                        </div>
+                    </div>
+                `).join('');
+
+                document.getElementById('results').innerHTML = html;
+                document.getElementById('stats').innerHTML = `<div class="stat">📋 ${data.total} series TRD</div>`;
+                document.getElementById('stats').style.display = 'flex';
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>

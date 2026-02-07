@@ -1,0 +1,391 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Errores de Procesamiento - PGN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e40af;
+            --accent: #0ea5e9;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --gradient-1: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: var(--gradient-1);
+            border-radius: 20px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .nav-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--danger);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .filters {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .errors-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-dark);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover td {
+            background: var(--bg-hover);
+        }
+
+        td {
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-extraccion {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .badge-excepcion {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .badge-llm {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+        }
+
+        .badge-ocr {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .archivo {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .mensaje {
+            max-width: 400px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            word-break: break-word;
+        }
+
+        .fecha {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--danger);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>⚠️ Errores de Procesamiento</h1>
+            <p>Registro de archivos con errores durante la extracción de decretos</p>
+            <a href="/" class="nav-link">← Volver a Consulta de Novedades</a>
+        </header>
+
+        <div class="stats-row" id="statsRow">
+            <div class="stat-card">
+                <div class="stat-value" id="totalErrores">-</div>
+                <div class="stat-label">Total Errores</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="form-group">
+                <label for="tipoError">Tipo de Error</label>
+                <select id="tipoError">
+                    <option value="">Todos los tipos</option>
+                </select>
+            </div>
+            <button class="btn" onclick="loadErrors()">Filtrar</button>
+        </div>
+
+        <section class="errors-section">
+            <div id="errorsContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando errores...</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const API_URL = '';
+
+        async function loadErrors() {
+            const tipoError = document.getElementById('tipoError').value;
+            const container = document.getElementById('errorsContainer');
+
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Cargando...</p></div>';
+
+            try {
+                const params = new URLSearchParams();
+                if (tipoError) params.append('tipo', tipoError);
+
+                const resp = await fetch(`${API_URL}/api/errores?${params}`);
+                const data = await resp.json();
+
+                document.getElementById('totalErrores').textContent = data.total;
+
+                // Poblar select de tipos si está vacío
+                const tipoSelect = document.getElementById('tipoError');
+                if (tipoSelect.options.length <= 1 && data.tipos) {
+                    data.tipos.forEach(t => {
+                        tipoSelect.innerHTML += `<option value="${t.tipo_error}">${t.tipo_error} (${t.total})</option>`;
+                    });
+                }
+
+                // Agregar cards de tipos
+                const statsRow = document.getElementById('statsRow');
+                if (data.tipos && statsRow.children.length <= 1) {
+                    data.tipos.forEach(t => {
+                        statsRow.innerHTML += `<div class="stat-card"><div class="stat-value" style="font-size:1.5rem;">${t.total}</div><div class="stat-label">${t.tipo_error}</div></div>`;
+                    });
+                }
+
+                if (data.errores.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><p>✅ No hay errores registrados</p></div>';
+                    return;
+                }
+
+                let html = `<div class="table-container"><table>
+                    <thead><tr>
+                        <th>ID</th>
+                        <th>Archivo</th>
+                        <th>Tipo</th>
+                        <th>Mensaje</th>
+                        <th>Fecha</th>
+                    </tr></thead><tbody>`;
+
+                data.errores.forEach(e => {
+                    const badgeClass = getBadgeClass(e.tipo_error);
+                    const archivo = e.archivo ? e.archivo.split('\\').pop() : '-';
+                    html += `<tr>
+                        <td>${e.id}</td>
+                        <td class="archivo" title="${e.archivo || ''}">${archivo}</td>
+                        <td><span class="badge ${badgeClass}">${e.tipo_error || '-'}</span></td>
+                        <td class="mensaje">${e.mensaje || '-'}</td>
+                        <td class="fecha">${e.fecha || '-'}</td>
+                    </tr>`;
+                });
+
+                html += '</tbody></table></div>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = '<div class="empty-state"><p>Error al cargar los errores</p></div>';
+            }
+        }
+
+        function getBadgeClass(tipo) {
+            if (tipo === 'EXTRACCION') return 'badge-extraccion';
+            if (tipo === 'EXCEPCION') return 'badge-excepcion';
+            if (tipo === 'LLM') return 'badge-llm';
+            if (tipo === 'OCR') return 'badge-ocr';
+            return 'badge-extraccion';
+        }
+
+        loadErrors();
+    </script>
+</body>
+
+</html>

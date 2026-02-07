@@ -1,0 +1,21 @@
+# Legal GraphRAG Application - Dependencies
+# ==========================================
+
+# Core
+streamlit>=1.28.0
+networkx>=3.0
+pandas>=2.0.0
+
+# Visualization
+pyvis>=0.3.2
+
+# Flask API (already installed)
+flask>=2.0.0
+flask-cors>=4.0.0
+
+# Optional: Advanced community detection
+# graspologic>=3.0.0  # For Leiden algorithm
+# leidenalg>=0.10.0   # Alternative Leiden
+
+# PDF handling (already installed)
+# pymupdf>=1.23.0

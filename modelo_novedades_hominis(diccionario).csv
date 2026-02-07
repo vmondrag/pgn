@@ -1,0 +1,48 @@
+tabla;Descripción de la tabla;nombre;tipo;tamaño;Descripción;Consulta SQL
+crequisi;Tabla de cargos;cre_cargo_b;varchar;6;código del cargo;select cre_cargo_b,cre_nmcarcat_b,cre_abcarcat_b from hominis.crequisi
+;;cre_nmcarcat_b;varchar;30;descripción del cargo largo, se utiliza dicho codigo en NPTRE;
+;;cre_abcarcat_b;varchar;15;descripción del cargo corto;
+dpdencia;Tabla de dependencias;dpd_cdregdpn_b;varchar;4;codigo regional;select dpd_cdregdpn_b,dpd_rocoddpn_b,dpd_dsdpn_b, dpd_dsdpnabr_b  from hominis.dpdencia
+;;dpd_rocoddpn_b;varchar;9;codigo dependencia ;
+;;dpd_dspdpn_b;varchar;40;nombre corto de la dependencia y se guarda en hominis junto regional, codigo de la dependencia;
+depensuip;Tabla con el nombre de la dependencia para los actos administrativos;dep_cdregdpn_b;varchar;4;codigo regional;select dep_cdregdpn_b,dep_rocoddpn_b,dep_nmdepensuip_b from hominis.depensuip
+;;dep_rocoddpn_b;varchar;9;codigo dependencia ;
+;;dep_nmdepensuip_b;varchar;128;Nombre largo de la dependencia (por lo general es el que aparece en los decretos);
+stnoveda;Tabla de las novedades de planta NPTRE;stn_cdtipnov_b;varchar;2;Tipo de la novedad;"select stn_cdtipnov_b,stn_cdstpnov_b,tno_dstipnov_b,stn_dsstpnov_b,stn_cdtipnovsig_b,stn_cdstpnovsig_b from hominis.stnoveda,hominis.tnovedad where stn_cdtipnov_b= tno_cdtipnov_b and  stn_tipo_b = 'N'
+ "
+;;stn_cdstpnov_b;varchar;2;Subtipo de la novedad;
+;;stn_dsstpnov_b;varchar;20;Descripción del tipo;
+;;stn_dsstpnov_b;varchar;20;Descripción del suptipo;
+;;stn_cdtipnovsig_b;varchar;2;Descripción del tipo siguiente;
+;;stn_cdstpnovsig_b;varchar;2;Descripción del subtipo siguiente;
+nptre;"Tabla de novedades del funcionario con nombramientos, posesiones, traslados, encargos, encargo de funciones,  comisiones de cargos de libre, coordinadores, asignación de funciones.
+En ella es en donde se insertan las novedades";npt_nrced_b;varchar;11;Cedula del funcionario sin puntos;"select npt_nrced_b,npt_nrnov_b,npt_fcnov_b,npt_tpnpt_b,npt_cdmotnpt_b,npt_cdregdpn_b,npt_rocoddpn_b,npt_dsdpnabr_b,
+
+npt_cargo_b,npt_coplz_b, npt_nmcarcat_b,npt_fcini_b,npt_fcfin_b,npt_fcinirea_b,npt_fcfinrea_b,npt_estado_b,
+
+npt_concepto_b, -- id del cargo, eso existe desde 2021, puede ser nulo, si no está en el acto administrativo.
+
+npt_nrnovref_b,npt_fcnovref_b -- Si son npt_tpnpt_b = '17 debe tener la novedad '05' o '09' o '06' o '07' o '23'  referenciada en npt_nrnovref_b, npt_fcnovref_b
+
+from hominis.nptre  order by npt_fcinirea_b ,npt_tpnpt_b
+
+ "
+;;npt_nrnov_b;varchar;2;número de novedad, es el numero del acto administrativo;
+;;npt_fcnov_b;date;;fecha de novedad, es el numero del acto administrativo aaaa-mm-dd;
+;;npt_tpnpt_b;varchar;2;tipo de novedad;
+;;npt_cdmotnpt_b;varchar;2;subtipo de novedad;
+;;npt_cdregdpn_b;varchar;4;codigo regional;
+;;npt_rocoddpn_b;varchar;9;codigo dependencia ;
+;;npt_dsdpnabr_b;varchar;40;nombre corto de la dependencia;
+;;npt_cargo_b;varchar;6;código del cargo;
+;;npt_coplz_b;numerico;entero;poner siempre 1;
+;;npt_nmcarcat_b;varchar;30;descripción del cargo largo;
+;;npt_fcini_b;date;;fecha del acto administrativo aaaa-mm-dd;
+;;npt_fcfin_b;date;;fecha fin del acto administrativo aaaa-mm-dd (lo debe calcular de acuerdo a lo que diga el acto administrativo;
+;;npt_fcinirea_b;date;;fecha real de inicio de la novedad aaaa-mm-dd;
+;;npt_fcfinrea_b;date;;fecha fin real del acto administrativo aaaa-mm-dd (lo debe calcular de acuerdo a lo que diga el acto administrativo;
+;;npt_estado_b;varchar;1;estado de la novedad;
+;;npt_concepto_b;numérico;entero;id del cargo;
+;;npt_nrnovref_b;varchar;2;número de novedad referenciada;
+;;npt_fcnovref_b;date;;fecha de novedad referenciada, aaaa-mm-dd;
+;;;;;;

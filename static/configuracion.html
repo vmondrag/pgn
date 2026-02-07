@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuracion LLM - PGN Novedades</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-light: #a78bfa;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --gradient-1: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
+
+        .nav-tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .nav-tab {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 1.5rem; background: var(--bg-card);
+            color: var(--text-secondary); border-radius: 12px;
+            text-decoration: none; font-weight: 500;
+            border: 2px solid var(--border); transition: all 0.3s;
+        }
+        .nav-tab:hover { background: var(--bg-hover); color: var(--text-primary); }
+        .nav-tab.active { background: var(--gradient-1); color: white; border-color: transparent; }
+
+        .header {
+            text-align: center; margin-bottom: 2rem; padding: 1.5rem;
+            background: var(--gradient-1); border-radius: 15px;
+        }
+        .header h1 { font-size: 2rem; font-weight: 700; }
+        .header p { opacity: 0.9; }
+
+        .card {
+            background: var(--bg-card); border-radius: 16px; padding: 1.5rem;
+            margin-bottom: 1.5rem; border: 1px solid var(--border);
+        }
+        .card h3 { margin-bottom: 1rem; color: var(--primary-light); }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 0.75rem; border: 2px solid var(--border);
+            border-radius: 10px; background: var(--bg-dark); color: var(--text-primary); font-size: 0.95rem;
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+        .btn {
+            padding: 0.75rem 1.5rem; border: none; border-radius: 10px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.95rem;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-primary { background: var(--gradient-1); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: black; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+
+        .provider-selector { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+        @media (max-width: 600px) { .provider-selector { grid-template-columns: repeat(2, 1fr); } }
+
+        .provider-option {
+            padding: 1rem; text-align: center; border-radius: 12px; cursor: pointer;
+            border: 2px solid var(--border); background: var(--bg-dark); transition: all 0.3s;
+        }
+        .provider-option:hover { border-color: var(--primary); }
+        .provider-option.selected { border-color: var(--primary); background: rgba(139, 92, 246, 0.15); }
+        .provider-option .provider-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem; }
+        .provider-option .provider-desc { font-size: 0.75rem; color: var(--text-secondary); }
+
+        .provider-section { display: none; }
+        .provider-section.active { display: block; }
+
+        .status-card {
+            background: var(--bg-dark); border-radius: 12px; padding: 1rem;
+            border: 1px solid var(--border);
+        }
+        .status-item { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+        .status-item:last-child { border-bottom: none; }
+        .status-label { color: var(--text-secondary); font-size: 0.85rem; }
+        .status-value { font-weight: 600; }
+
+        .alert { padding: 1rem; border-radius: 10px; margin-bottom: 1rem; }
+        .alert-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .alert-error { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .alert-info { background: rgba(6, 182, 212, 0.2); color: var(--accent); }
+
+        .test-result { margin-top: 1rem; padding: 1rem; border-radius: 10px; font-family: monospace; font-size: 0.85rem; }
+
+        .spinner {
+            display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border);
+            border-top-color: var(--primary); border-radius: 50%;
+            animation: spin 1s linear infinite; vertical-align: middle; margin-right: 0.5rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .actions-bar { display: flex; gap: 1rem; margin-top: 1.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-tabs">
+            <a href="/" class="nav-tab">Decretos</a>
+            <a href="/resoluciones" class="nav-tab">Resoluciones</a>
+            <a href="/resoluciones/huerfanas" class="nav-tab">Pendientes Revision</a>
+            <a href="/configuracion" class="nav-tab active">Configuracion</a>
+        </nav>
+
+        <header class="header">
+            <h1>Configuracion LLM</h1>
+            <p>Selecciona y configura el modelo de IA para validacion y correccion de novedades</p>
+        </header>
+
+        <!-- Estado actual -->
+        <div class="card">
+            <h3>Estado Actual</h3>
+            <div class="status-card">
+                <div class="status-item">
+                    <span class="status-label">Proveedor Activo</span>
+                    <span class="status-value" id="statusProveedor">-</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Modelo Activo</span>
+                    <span class="status-value" id="statusModelo">-</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Ultima Actualizacion</span>
+                    <span class="status-value" id="statusFecha">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <!-- Seleccion de Proveedor -->
+        <div class="card">
+            <h3>Seleccionar Proveedor</h3>
+            <div class="provider-selector">
+                <div class="provider-option" onclick="selectProvider('openai')" id="opt-openai">
+                    <div class="provider-name">OpenAI</div>
+                    <div class="provider-desc">GPT-4o-mini, GPT-4o, GPT-4.1</div>
+                </div>
+                <div class="provider-option" onclick="selectProvider('azure')" id="opt-azure">
+                    <div class="provider-name">Azure OpenAI</div>
+                    <div class="provider-desc">Deployment propio</div>
+                </div>
+                <div class="provider-option" onclick="selectProvider('ollama')" id="opt-ollama">
+                    <div class="provider-name">Ollama Local</div>
+                    <div class="provider-desc">Modelos locales</div>
+                </div>
+                <div class="provider-option" onclick="selectProvider('ollama_cloud')" id="opt-ollama_cloud">
+                    <div class="provider-name">Ollama Cloud</div>
+                    <div class="provider-desc">kimi-k2.5 y otros</div>
+                </div>
+            </div>
+
+            <!-- OpenAI Section -->
+            <div class="provider-section" id="section-openai">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>API Key</label>
+                        <input type="password" id="openai_api_key" placeholder="sk-...">
+                    </div>
+                    <div class="form-group">
+                        <label>Modelo</label>
+                        <select id="openai_modelo">
+                            <option value="gpt-4o-mini">gpt-4o-mini</option>
+                            <option value="gpt-4o">gpt-4o</option>
+                            <option value="gpt-4.1">gpt-4.1</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Azure Section -->
+            <div class="provider-section" id="section-azure">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Endpoint</label>
+                        <input type="text" id="azure_endpoint" placeholder="https://...openai.azure.com/">
+                    </div>
+                    <div class="form-group">
+                        <label>API Key</label>
+                        <input type="password" id="azure_api_key" placeholder="Clave de Azure">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Modelo (Deployment)</label>
+                        <input type="text" id="azure_modelo" placeholder="gpt-4.1">
+                    </div>
+                    <div class="form-group">
+                        <label>API Version</label>
+                        <input type="text" id="azure_api_version" placeholder="2025-01-01-preview">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ollama Local Section -->
+            <div class="provider-section" id="section-ollama">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>URL del Servidor</label>
+                        <input type="text" id="ollama_url" placeholder="http://localhost:11434">
+                    </div>
+                    <div class="form-group">
+                        <label>Modelo <button type="button" class="btn btn-sm btn-warning" onclick="refreshOllamaModels()">Refrescar Modelos</button></label>
+                        <select id="ollama_modelo">
+                            <option value="llama3.1">llama3.1</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="ollamaModelsInfo" style="font-size:0.8rem;color:var(--text-secondary);"></div>
+            </div>
+
+            <!-- Ollama Cloud Section -->
+            <div class="provider-section" id="section-ollama_cloud">
+                <div class="alert alert-info">
+                    Ollama Cloud permite acceder a modelos como <strong>kimi-k2.5</strong> que integra vision y comprension del lenguaje con capacidades agénticas avanzadas, ideal para corregir defectos de PDFs.
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>URL API</label>
+                        <input type="text" id="ollama_cloud_url" placeholder="https://api.ollama.com">
+                    </div>
+                    <div class="form-group">
+                        <label>API Key</label>
+                        <input type="password" id="ollama_cloud_api_key" placeholder="Clave de Ollama Cloud">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Modelo</label>
+                    <input type="text" id="ollama_cloud_modelo" placeholder="kimi-k2.5">
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="actions-bar">
+            <button class="btn btn-primary" onclick="saveConfig()" style="flex:2;">Guardar Configuracion</button>
+            <button class="btn btn-success" onclick="testConnection()" style="flex:1;">Probar Conexion</button>
+        </div>
+
+        <div id="testResult"></div>
+    </div>
+
+    <script>
+        const API_URL = '';
+        let currentProvider = 'openai';
+        let configData = {};
+
+        function selectProvider(provider) {
+            currentProvider = provider;
+            document.querySelectorAll('.provider-option').forEach(el => el.classList.remove('selected'));
+            document.getElementById(`opt-${provider}`).classList.add('selected');
+            document.querySelectorAll('.provider-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(`section-${provider}`).classList.add('active');
+        }
+
+        async function loadConfig() {
+            try {
+                const resp = await fetch(`${API_URL}/api/configuracion`);
+                configData = await resp.json();
+
+                const get = (key) => configData[key]?.valor || '';
+                const getMasked = (key) => configData[key]?.valor_masked || configData[key]?.valor || '';
+
+                // Seleccionar proveedor activo
+                selectProvider(get('proveedor_activo') || 'openai');
+
+                // OpenAI
+                document.getElementById('openai_api_key').value = getMasked('openai_api_key');
+                const openaiModelo = get('modelo_activo') || 'gpt-4o-mini';
+                const openaiSelect = document.getElementById('openai_modelo');
+                for (let opt of openaiSelect.options) {
+                    if (opt.value === openaiModelo) { opt.selected = true; break; }
+                }
+
+                // Azure
+                document.getElementById('azure_endpoint').value = get('azure_endpoint');
+                document.getElementById('azure_api_key').value = getMasked('azure_api_key');
+                document.getElementById('azure_modelo').value = get('azure_modelo');
+                document.getElementById('azure_api_version').value = get('azure_api_version');
+
+                // Ollama Local
+                document.getElementById('ollama_url').value = get('ollama_url') || 'http://localhost:11434';
+                const ollamaModeloActual = get('ollama_modelo') || 'llama3.1';
+                const ollamaSelect = document.getElementById('ollama_modelo');
+                let found = false;
+                for (let opt of ollamaSelect.options) {
+                    if (opt.value === ollamaModeloActual) { opt.selected = true; found = true; break; }
+                }
+                if (!found) {
+                    ollamaSelect.innerHTML += `<option value="${ollamaModeloActual}" selected>${ollamaModeloActual}</option>`;
+                }
+
+                // Ollama Cloud
+                document.getElementById('ollama_cloud_url').value = get('ollama_cloud_url');
+                document.getElementById('ollama_cloud_api_key').value = getMasked('ollama_cloud_api_key');
+                document.getElementById('ollama_cloud_modelo').value = get('ollama_cloud_modelo') || 'kimi-k2.5';
+
+                // Estado
+                document.getElementById('statusProveedor').textContent = (get('proveedor_activo') || 'openai').toUpperCase();
+                document.getElementById('statusModelo').textContent = get('modelo_activo') || 'gpt-4o-mini';
+
+                // Encontrar la fecha más reciente
+                let latestDate = '';
+                Object.values(configData).forEach(v => {
+                    if (v.fecha_actualizacion && v.fecha_actualizacion > latestDate) latestDate = v.fecha_actualizacion;
+                });
+                document.getElementById('statusFecha').textContent = latestDate || '-';
+
+            } catch (error) {
+                console.error('Error cargando config:', error);
+                document.getElementById('alertContainer').innerHTML = '<div class="alert alert-error">Error cargando configuracion</div>';
+            }
+        }
+
+        async function saveConfig() {
+            const alertContainer = document.getElementById('alertContainer');
+
+            // Determinar el modelo activo segun el proveedor
+            let modeloActivo = '';
+            if (currentProvider === 'openai') {
+                modeloActivo = document.getElementById('openai_modelo').value;
+            } else if (currentProvider === 'azure') {
+                modeloActivo = document.getElementById('azure_modelo').value;
+            } else if (currentProvider === 'ollama') {
+                modeloActivo = document.getElementById('ollama_modelo').value;
+            } else if (currentProvider === 'ollama_cloud') {
+                modeloActivo = document.getElementById('ollama_cloud_modelo').value;
+            }
+
+            const data = {
+                proveedor_activo: currentProvider,
+                modelo_activo: modeloActivo,
+                openai_api_key: document.getElementById('openai_api_key').value,
+                azure_endpoint: document.getElementById('azure_endpoint').value,
+                azure_api_key: document.getElementById('azure_api_key').value,
+                azure_modelo: document.getElementById('azure_modelo').value,
+                azure_api_version: document.getElementById('azure_api_version').value,
+                ollama_url: document.getElementById('ollama_url').value,
+                ollama_modelo: document.getElementById('ollama_modelo').value,
+                ollama_cloud_url: document.getElementById('ollama_cloud_url').value,
+                ollama_cloud_api_key: document.getElementById('ollama_cloud_api_key').value,
+                ollama_cloud_modelo: document.getElementById('ollama_cloud_modelo').value
+            };
+
+            try {
+                const resp = await fetch(`${API_URL}/api/configuracion`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await resp.json();
+
+                if (result.success) {
+                    alertContainer.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+                    // Actualizar estado
+                    document.getElementById('statusProveedor').textContent = currentProvider.toUpperCase();
+                    document.getElementById('statusModelo').textContent = modeloActivo;
+                    document.getElementById('statusFecha').textContent = new Date().toISOString().slice(0, 19);
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${result.error}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+            }
+
+            setTimeout(() => { alertContainer.innerHTML = ''; }, 5000);
+        }
+
+        async function testConnection() {
+            const testResult = document.getElementById('testResult');
+            testResult.innerHTML = '<div class="alert alert-info" style="margin-top:1rem;"><span class="spinner"></span> Probando conexion...</div>';
+
+            try {
+                const resp = await fetch(`${API_URL}/api/configuracion/test`, { method: 'POST' });
+                const data = await resp.json();
+
+                if (data.success) {
+                    testResult.innerHTML = `
+                        <div class="test-result" style="background:rgba(16,185,129,0.15);border:1px solid var(--success);margin-top:1rem;">
+                            <strong style="color:var(--success);">Conexion exitosa</strong><br>
+                            <span style="color:var(--text-secondary);">Modelo: ${data.modelo}</span><br>
+                            <span style="color:var(--text-secondary);">Respuesta:</span> ${data.respuesta}
+                        </div>`;
+                } else {
+                    testResult.innerHTML = `
+                        <div class="test-result" style="background:rgba(239,68,68,0.15);border:1px solid var(--danger);margin-top:1rem;">
+                            <strong style="color:var(--danger);">Error de conexion</strong><br>
+                            <span>${data.error}</span>
+                        </div>`;
+                }
+            } catch (error) {
+                testResult.innerHTML = `
+                    <div class="test-result" style="background:rgba(239,68,68,0.15);border:1px solid var(--danger);margin-top:1rem;">
+                        <strong style="color:var(--danger);">Error</strong><br>
+                        <span>${error.message}</span>
+                    </div>`;
+            }
+        }
+
+        async function refreshOllamaModels() {
+            const info = document.getElementById('ollamaModelsInfo');
+            info.innerHTML = '<span class="spinner"></span> Consultando modelos...';
+
+            try {
+                const resp = await fetch(`${API_URL}/api/configuracion/ollama/modelos`);
+                const data = await resp.json();
+
+                if (data.success && data.modelos.length > 0) {
+                    const select = document.getElementById('ollama_modelo');
+                    const currentVal = select.value;
+                    select.innerHTML = '';
+                    data.modelos.forEach(m => {
+                        select.innerHTML += `<option value="${m}" ${m === currentVal ? 'selected' : ''}>${m}</option>`;
+                    });
+                    info.innerHTML = `<span style="color:var(--success);">${data.modelos.length} modelo(s) encontrado(s)</span>`;
+                } else {
+                    info.innerHTML = `<span style="color:var(--danger);">${data.error || data.message || 'Sin modelos'}</span>`;
+                }
+            } catch (error) {
+                info.innerHTML = `<span style="color:var(--danger);">Error: ${error.message}. Verifica que Ollama este corriendo.</span>`;
+            }
+        }
+
+        // Init
+        loadConfig();
+    </script>
+</body>
+</html>

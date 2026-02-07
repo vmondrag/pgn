@@ -1,0 +1,109 @@
+================================================================================
+RESUMEN DEL ANALISIS DE RESOLUCIONES PDF - PROCURADURIA GENERAL DE LA NACION
+================================================================================
+
+CARPETA 2023: c:	emp\PNG_CERTIFICADO_V3\Decretos\RESOLUCIONES -2023--------------------------------------------------------------------------------
+
+1. RESOLUCION 006 DE 11 DE ENERO DE 2023.pdf
+   - Paginas: 2
+   - TIPO: PRORROGA PARA POSESION
+   - Asunto: Prorroga para tomar posesion de un cargo
+   - Beneficiario: NELSON ALDEMAR GONZALEZ SANCHEZ (CC 1.032.497.166)
+   - Cargo: Asesor, Codigo 1AS, Grado 19 (ID.0751)
+
+2. RESOLUCION 030 DE 27 DE ENERO DE 2023.pdf
+   - Paginas: 2
+   - TIPO: PRORROGA PARA POSESION
+   - Beneficiario: JULIANA ANDREA TORRES BARON (CC 1.010.188.919)
+   - Cargo: Sustanciador, Codigo 4SU, Grado 09 (ID. 3382)
+
+3. RESOLUCION 041 DE 1 DE FEBRERO DE 2023.pdf
+   - Paginas: 2
+   - TIPO: LICENCIA NO REMUNERADA
+   - Beneficiario: DIANA PATRICIA SALCEDO GIRALDO (CC 50.899.032)
+   - Periodo: 10 al 14 de abril de 2023
+
+4. RESOLUCION 049 DE 08 DE FEBRERO DE 2023.pdf
+   - Paginas: 5
+   - TIPO: LICENCIA POR LUTO (REMUNERADA)
+   - Asunto: Reconocimiento de licencias por luto a varios servidores
+
+5. RESOLUCION 061 DE 16 DE FEBRERO DE 2023.pdf
+   - Paginas: 3
+   - TIPO: COMISION ESPECIAL (NEGADA)
+   - Solicitante: EVERARDO ARMENTA ALONSO (CC 77.025.967)
+
+6. NIDIA MARLENY DELGADO QUITIAN Y OTROS E 0210.pdf
+   - Paginas: 2
+   - TIPO: ENCARGO (DECRETO)
+   - Encargados sucesivos por vacancia temporal
+
+7. MELISSA DIAZ RAMOS C 0447.pdf
+   - Paginas: 2
+   - TIPO: COMISION (DECRETO)
+
+CARPETA 2024:
+--------------------------------------------------------------------------------
+
+1. RES 001 - LUZ ESPERANZA FORERO: LICENCIA NO REMUNERADA (3-12 ene)
+2. RES 002 - JOSE MARTIN ESPITIA: LICENCIA NO REMUNERADA (27 mar - 28 abr)
+3. RES 010 - DEISY JANETH BARRIENTO: PRORROGA LICENCIA ESTUDIOS (Doctorado Espana)
+4. RES 029 - GLORIA STELLA BELTRAN: LICENCIA NO REMUNERADA (15 mar - 14 jun)
+5. RES 031 - IVAN FIGUEREDO: COMISION ESPECIAL (Corte Suprema, 2 anos)
+6. RES 032 - RUBY ESTHER GARCIA: LICENCIA NO REMUNERADA (5-29 feb)
+7. RES 319 - NO ENCONTRADO
+
+CARPETA 2025:
+--------------------------------------------------------------------------------
+
+1. RES 001 - VANESSA VELEZ: PRORROGA POSESION (hasta 21 feb 2025)
+2. RES 005 - LAURA RUEDA: PRORROGA COMISION ESPECIAL (hasta 23 abr 2025)
+3. RES 010 - HERBER FLOREZ: PRORROGA POSESION (hasta 3 mar 2025)
+4. RES 017 - GUILLERMO MEDINA: COMISION ESPECIAL (Sala Justicia y Paz, 2 anos)
+5. RES 020 - ANDREA OSPINA: LICENCIA POR LUTO + INTERRUPCION VACACIONES
+6. RES 025 - CUMPLIMIENTO ORDEN JUDICIAL (Lista elegibles convocatoria 007-2015)
+
+================================================================================
+TIPOS DE NOVEDADES IDENTIFICADAS:
+================================================================================
+
+| TIPO DE NOVEDAD                      | CANTIDAD |
+|--------------------------------------|----------|
+| Licencia No Remunerada (ordinaria)   | 5        |
+| Licencia No Remunerada (estudios)    | 1        |
+| Licencia Por Luto (remunerada)       | 2        |
+| Comision Especial                    | 4        |
+| Prorroga Comision Especial           | 1        |
+| Prorroga Para Posesion               | 4        |
+| Encargo                              | 1        |
+| Cumplimiento Orden Judicial          | 1        |
+| Comision (cargo libre nombramiento)  | 1        |
+
+================================================================================
+ESTRUCTURA COMUN DE LAS RESOLUCIONES:
+================================================================================
+
+1. ENCABEZADO:
+   - Logo: PROCURADURIA GENERAL DE LA NACION
+   - Numero y fecha de resolucion
+   - Asunto/Objeto
+
+2. AUTORIDAD:
+   - Procurador(a) General de la Nacion
+   - Viceprocurador (con funciones de Procurador)
+   - Secretario General
+
+3. CONSIDERANDOS:
+   - Marco legal (Decreto Ley 262/2000, Ley 1635/2013)
+   - Datos del servidor (nombre, cedula, cargo, ID)
+   - Solicitud y justificacion
+   - Verificacion HOMINIS
+
+4. RESUELVE:
+   - Articulos con la decision
+   - Comunicacion
+   - Vigencia
+
+5. CODIGO FORMATO: DO-F-29
+
+================================================================================

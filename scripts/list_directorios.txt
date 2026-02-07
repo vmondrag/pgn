@@ -1,0 +1,6 @@
+C:\temp\PNG_CERTIFICADO_V3\Decretos\2009
+C:\temp\PNG_CERTIFICADO_V3\Decretos\2010
+C:\temp\PNG_CERTIFICADO_V3\Decretos\2011
+
+
+python extract_hybrid.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\2012" --llm gpt-oss:20b --output-dir output_2012_hybrid

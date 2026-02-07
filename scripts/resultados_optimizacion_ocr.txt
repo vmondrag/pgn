@@ -1,0 +1,89 @@
+================================================================================
+RESULTADOS DE OPTIMIZACIÓN OCR - NVIDIA NIM PaddleOCR
+================================================================================
+Fecha: 2026-01-13
+PDF de prueba: RESOLUCION 085 DE 01 DE MARZO DE 2024 (múltiples funcionarios, tablas)
+
+================================================================================
+CONCLUSIONES PRINCIPALES
+================================================================================
+
+1. MODO DE PREPROCESAMIENTO ÓPTIMO: "grayscale"
+   -----------------------------------------------
+   - Consistentemente extrae MÁS caracteres que otros modos
+   - Página 2: 3,812 chars (grayscale) vs 3,791 (none) = +0.6%
+   - Página 3: 3,767 chars (grayscale) vs 3,711 (none) = +1.5%
+   - Página 4: 3,859 chars (grayscale) vs 3,823 (none) = +0.9%
+
+   El modo "enhanced" con binarización Otsu REDUCE la extracción (-3% a -5%)
+   debido a que elimina información de grises útil para el OCR.
+
+2. DPI ÓPTIMO: 150-200 DPI (SORPRENDENTE)
+   --------------------------------------
+   Contrario a lo esperado, DPI más bajo produce MEJOR extracción:
+   - 150 DPI: 3,777 chars, 544 words, 1.35s
+   - 200 DPI: 3,749 chars, 524 words, 1.30s
+   - 300 DPI: 3,711 chars, 516 words, 1.56s
+   - 400 DPI: 3,713 chars, 516 words, 2.70s
+
+   Posible explicación: NIM PaddleOCR está optimizado para imágenes
+   de menor resolución. La interpolación interna del modelo puede
+   introducir artefactos con imágenes muy grandes.
+
+3. TIEMPO DE PROCESAMIENTO
+   ------------------------
+   - Sin preprocesamiento: ~2s por página
+   - Con preprocesamiento: ~5s por página (3s en CV2 + 2s OCR)
+   - El modo "enhanced" reduce tamaño de imagen (~10x) pero no mejora calidad
+
+4. PROBLEMAS DETECTADOS EN OCR
+   ----------------------------
+   - Duplicación de texto (cada línea aparece 2 veces)
+   - Errores en "GENERAL DE LA NACIÓN":
+     * "GENRALDELA ACH", "GENRALDELA NACON", "GEHEALDELAMACON"
+   - Errores en números de cédula (no evaluado en esta prueba)
+
+================================================================================
+CONFIGURACIÓN RECOMENDADA
+================================================================================
+
+Para RESOLUCIONES PGN con tablas de funcionarios:
+
+preprocess_mode = "grayscale"  # Mejor balance calidad/tiempo
+dpi = 150                      # Mejor extracción y más rápido
+
+NOTA: El preprocesamiento agrega ~3 segundos por página pero mejora
+ligeramente la extracción. Si el tiempo es crítico, usar "none" con
+DPI 150 produce resultados casi equivalentes.
+
+================================================================================
+CÓDIGO DE PREPROCESAMIENTO IMPLEMENTADO
+================================================================================
+
+def preprocess_image_for_ocr(img_bytes: bytes, mode: str = "grayscale") -> bytes:
+    """
+    Modos disponibles:
+    - "none": Sin preprocesamiento (más rápido)
+    - "grayscale": Escala de grises + denoising (RECOMENDADO)
+    - "contrast": Grayscale + CLAHE (contraste adaptativo)
+    - "enhanced": Grayscale + CLAHE + binarización Otsu (NO RECOMENDADO)
+    """
+
+================================================================================
+PRÓXIMOS PASOS PARA MEJORAR CALIDAD
+================================================================================
+
+1. POST-PROCESAMIENTO DE TEXTO:
+   - Corregir "GENERAL DE LA NACIÓN" con regex
+   - Eliminar líneas duplicadas consecutivas
+   - Validar formato de cédulas con regex
+
+2. PROMPT LLM MEJORADO:
+   - El LLM puede corregir errores menores de OCR
+   - Incluir instrucciones para interpretar tablas con errores
+
+3. CONFIGURACIÓN NIM PaddleOCR:
+   - NIM_TRITON_OPTIMIZATION_MODE=balanced
+   - NIM_MODEL_PROFILE=balanced (para mejor precisión)
+
+================================================================================

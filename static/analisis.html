@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis LLM - Novedades PGN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-light: #a78bfa;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --gradient-1: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+            --gradient-2: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: var(--gradient-1);
+            border-radius: 20px;
+        }
+
+        .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .header p { font-size: 1rem; opacity: 0.9; }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover { background: rgba(255,255,255,0.2); }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card h3 {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-detail { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; }
+
+        .section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .chart-container { grid-template-columns: 1fr; }
+        }
+
+        .chart-box {
+            background: var(--bg-dark);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .chart-box h4 {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .bar-chart { display: flex; flex-direction: column; gap: 0.75rem; }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bar-label {
+            width: 80px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 24px;
+            background: var(--bg-card);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--gradient-1);
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            padding-left: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .razonamiento-card {
+            background: var(--bg-dark);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .razonamiento-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(124, 58, 237, 0.2);
+            color: var(--primary-light);
+        }
+
+        .razonamiento-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .file-name {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--bg-dark); color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; }
+        tr:hover td { background: var(--bg-hover); }
+
+        .progress-ring {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1rem;
+        }
+
+        .empty-state { text-align: center; padding: 2rem; color: var(--text-secondary); }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🧠 Análisis del Sistema de Aprendizaje LLM</h1>
+            <p>Monitoreo del proceso de extracción inteligente de novedades</p>
+            <nav class="nav-links">
+                <a href="/">🏠 Inicio</a>
+                <a href="/errores">⚠️ Errores</a>
+                <a href="/analisis">📊 Análisis</a>
+            </nav>
+        </header>
+
+        <!-- Estadísticas principales -->
+        <div class="dashboard-grid" id="statsGrid">
+            <div class="stat-card">
+                <h3>📄 Decretos Procesados</h3>
+                <div class="stat-value" id="statDecretos">-</div>
+                <div class="stat-detail" id="statMetodos"></div>
+            </div>
+            <div class="stat-card">
+                <h3>👥 Funcionarios</h3>
+                <div class="stat-value" id="statFuncionarios">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>📋 Novedades</h3>
+                <div class="stat-value" id="statNovedades">-</div>
+                <div class="stat-detail" id="statPendientes"></div>
+            </div>
+            <div class="stat-card">
+                <h3>🧠 Ejemplos Aprendizaje</h3>
+                <div class="stat-value" id="statAprendizaje">-</div>
+                <div class="stat-detail">Base de conocimiento LLM</div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <section class="section">
+            <h2 class="section-title">📊 Distribución de Datos</h2>
+            <div class="chart-container">
+                <div class="chart-box">
+                    <h4>Por Método de Extracción</h4>
+                    <div class="bar-chart" id="chartMetodo"></div>
+                </div>
+                <div class="chart-box">
+                    <h4>Por Tipo de Novedad (Top 10)</h4>
+                    <div class="bar-chart" id="chartTipo"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ejemplos de Aprendizaje por Código -->
+        <section class="section">
+            <h2 class="section-title">🎓 Base de Aprendizaje por Código</h2>
+            <div class="table-container">
+                <table id="tablaAprendizaje">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Ejemplos</th>
+                            <th>Confianza Promedio</th>
+                            <th>Barra Visual</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyAprendizaje">
+                        <tr><td colspan="4" class="loading"><div class="spinner"></div>Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Razonamientos del LLM -->
+        <section class="section">
+            <h2 class="section-title">💭 Últimos Razonamientos del LLM</h2>
+            <div id="razonamientosContainer">
+                <div class="loading"><div class="spinner"></div>Cargando razonamientos...</div>
+            </div>
+        </section>
+
+        <!-- Distribución por Año -->
+        <section class="section">
+            <h2 class="section-title">📅 Decretos por Año</h2>
+            <div class="bar-chart" id="chartAnio"></div>
+        </section>
+    </div>
+
+    <script>
+        const API_URL = '';
+
+        async function loadStats() {
+            try {
+                const resp = await fetch(`${API_URL}/api/stats/detallado`);
+                const data = await resp.json();
+
+                document.getElementById('statDecretos').textContent = data.total_decretos.toLocaleString();
+                document.getElementById('statFuncionarios').textContent = data.total_funcionarios.toLocaleString();
+                document.getElementById('statNovedades').textContent = data.total_novedades.toLocaleString();
+                document.getElementById('statAprendizaje').textContent = data.total_ejemplos_aprendizaje.toLocaleString();
+
+                // Métodos de extracción
+                const metodos = data.por_metodo.map(m => `${m.tipo_extraccion}: ${m.cantidad}`).join(' | ');
+                document.getElementById('statMetodos').textContent = metodos;
+
+                // Pendientes
+                if (data.pendientes_revision > 0) {
+                    document.getElementById('statPendientes').innerHTML = 
+                        `<span style="color:#f59e0b">⚠️ ${data.pendientes_revision} pendientes revisión</span>`;
+                }
+
+                // Gráfico métodos
+                renderBarChart('chartMetodo', data.por_metodo.map(m => ({
+                    label: m.tipo_extraccion || 'N/A',
+                    value: m.cantidad
+                })));
+
+                // Gráfico tipos
+                renderBarChart('chartTipo', data.por_tipo.slice(0, 10).map(t => ({
+                    label: t.codigo_novedad || 'N/A',
+                    value: t.total
+                })));
+
+                // Gráfico años
+                renderBarChart('chartAnio', data.por_anio.slice(0, 10).map(a => ({
+                    label: a.anio?.toString() || 'N/A',
+                    value: a.cantidad
+                })));
+
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+            }
+        }
+
+        async function loadAprendizaje() {
+            try {
+                const resp = await fetch(`${API_URL}/api/aprendizaje`);
+                const data = await resp.json();
+
+                const tbody = document.getElementById('tbodyAprendizaje');
+                
+                if (data.por_codigo.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No hay ejemplos de aprendizaje aún. Procese algunos decretos para comenzar.</td></tr>';
+                    return;
+                }
+
+                const maxTotal = Math.max(...data.por_codigo.map(c => c.total));
+
+                tbody.innerHTML = data.por_codigo.map(c => `
+                    <tr>
+                        <td><span class="badge">${c.codigo_novedad}</span></td>
+                        <td>${c.total}</td>
+                        <td>${(c.confianza_promedio * 100).toFixed(0)}%</td>
+                        <td>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: ${(c.total / maxTotal * 100)}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error cargando aprendizaje:', error);
+            }
+        }
+
+        async function loadRazonamientos() {
+            try {
+                const resp = await fetch(`${API_URL}/api/razonamientos?limit=10`);
+                const data = await resp.json();
+
+                const container = document.getElementById('razonamientosContainer');
+                
+                if (data.razonamientos.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No hay razonamientos registrados aún.</div>';
+                    return;
+                }
+
+                container.innerHTML = data.razonamientos.map(r => `
+                    <div class="razonamiento-card">
+                        <div class="razonamiento-header">
+                            <span class="badge">${r.codigo_novedad}</span>
+                            <span style="font-size:0.8rem; color:var(--accent)">${(r.confianza * 100).toFixed(0)}% confianza</span>
+                        </div>
+                        <div class="razonamiento-text">"${r.razonamiento}"</div>
+                        <div class="file-name">📄 ${r.nombre_archivo || 'Sin archivo'}</div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error cargando razonamientos:', error);
+            }
+        }
+
+        function renderBarChart(containerId, data) {
+            const container = document.getElementById(containerId);
+            if (data.length === 0) {
+                container.innerHTML = '<div class="empty-state">Sin datos</div>';
+                return;
+            }
+
+            const maxValue = Math.max(...data.map(d => d.value));
+
+            container.innerHTML = data.map(d => `
+                <div class="bar-item">
+                    <span class="bar-label">${d.label}</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: ${(d.value / maxValue * 100)}%">
+                            ${d.value.toLocaleString()}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Cargar todo al inicio
+        loadStats();
+        loadAprendizaje();
+        loadRazonamientos();
+    </script>
+</body>
+
+</html>

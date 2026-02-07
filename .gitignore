@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Databases
+*.db
+
+# IDE
+.vscode/
+.claude/
+*.code-workspace
+
+# Data directories (large files)
+Decretos/
+Error_Decretos/
+Certificaciones/
+OCR/
+Novedades_OUT/
+casos/
+Manuales_Funciones/
+Copia/
+Borrador/
+azure/
+mermaid-images/
+Plan_de_Proyecto/
+Expediente_electronico_IA/
+PNG_EXPEDIENTE_ELECTRONICO/
+PROMPT_EJECUTADOS/
+
+# Sensitive files
+app/API_KEY_GPT.md
+
+# Archives
+*.zip
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temp files
+nul
+tmpclaude-*
+
+# Large/generated files
+extraction_results.json
+huerfanos_sample.json
+*.docx

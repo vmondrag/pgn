@@ -1,0 +1,67 @@
+Despues de revsar la base de información cargada, certificaciones_pgn.db se observa que nunguna tiene el campo Identificaicón { cedula}  y tmapoco nombres y apellidos . Por ejempl el archivo "Certificaciones\2011\11002316_18-02-2011_TP - copia.doc" contiene la información  textual "...   Que el Doctor ALBERTO JULIO OCHOA ARIZAL, identificado con cédula de ciudadanía número 11.002.316 de Montería, de acuerdo con la revisión de la Historia laboral y consultado el Sistema Integrado Administrativo y Financiero SIAF, desempeño en esta Entidad los siguientes cargos:
+
+•	Del 10 de Julio de 2002, ocupo el cargo de Sustanciador, Grado 8, de la Procuraduría 230 Judicial I Penal de Montería, al 3 de septiembre de 2003.
+•	Del 4 de septiembre de 2003, ocupo el cargo de Sustanciador, Grado 11, de la Procuraduría 37 Judicial II Penal de Montería, hasta el 26 de agosto de 2010.
+
+ollama API KEY  b518440a83db460e830b4158c1778daf._nW_CUlT6r8hCCskKpGbToJN
+b518440a83db460e830b4158c1778daf._nW_CUlT6r8hCCskKpGbToJN
+ollama
+
+Ejecutar : ollama serve
+
+Eliminar proceso ollama
+netstat -aon | findstr :11434   
+SALIDA: TCP    127.0.0.1:11434        0.0.0.0:0              LISTENING       153860
+entonces:
+taskkill /F /PID 153860
+
+
+
+Se anexan funciones.
+
+
+
+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
+
+
+OCR.
+
+$ docker login nvcr.io
+Username: $oauthtoken
+Password: PYy7DX0Ei7Sez7IKS9xeFEU7OurJnVQbhjwhowSR6Vsy01l47kv2GBHKxvziAJ1A
+
+wsl
+
+
+export NGC_API_KEY=PYy7DX0Ei7Sez7IKS9xeFEU7OurJnVQbhjwhowSR6Vsy01l47kv2GBHKxvziAJ1A
+export LOCAL_NIM_CACHE=~/.cache/nim
+mkdir -p "$LOCAL_NIM_CACHE"
+docker run -it --rm --gpus all --shm-size=16GB -e NGC_API_KEY=$NGC_API_KEY -v "$LOCAL_NIM_CACHE:/opt/nim/.cache"    -u $(id -u) -p 8000:8000  nvcr.io/nim/baidu/paddleocr:latest
+
+
+
+
+
+
+
+
+python extract_decretos.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\2009" --llm gpt-oss:20b-cloud
+python extract_decretos.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\DECRETOS 2021" --llm gpt-oss:20b-cloud
+
+
+
+RESOLUCIONES
+
+# Procesar resoluciones 2023
+python extract_resoluciones.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\RESOLUCIONES -2023" --llm gpt-oss:120b-cloud --output "C:\temp\PNG_CERTIFICADO_V3\output_res_2023"
+
+# Procesar resoluciones 2024
+python extract_resoluciones.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\RESOLUCIONES 2024" --llm gpt-oss:120b-cloud --output "C:\temp\PNG_CERTIFICADO_V3\output_res_2024"
+
+# Procesar resoluciones 2025
+python extract_resoluciones.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\RESOLUCIONES 2025" --llm gpt-oss:120b-cloud --output "C:\temp\PNG_CERTIFICADO_V3\output_res_2025"
+
+# Con límite y directorio de salida personalizado
+python extract_resoluciones.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\RESOLUCIONES 2024" --llm gpt-oss:120b-cloud --limit 50 --output "C:\temp\PNG_CERTIFICADO_V3\output_res_2024"
+
+

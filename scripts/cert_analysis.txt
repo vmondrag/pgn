@@ -1,0 +1,137 @@
+﻿======================================================================
+AN┴LISIS DE CERTIFICACIONES POR AÐO
+======================================================================
+
+1. CONTEO DE ARCHIVOS POR AÐO
+----------------------------------------
+  2007:      0 PDFs
+  2010:      0 PDFs
+  2011:      0 PDFs
+  2012:      0 PDFs
+  2013:      0 PDFs
+  2014:      0 PDFs
+  2015:      0 PDFs
+  2016:      0 PDFs
+  2017:      0 PDFs
+  2018:      0 PDFs
+  2019:      5 PDFs
+  2020:      3 PDFs
+  2021:      3 PDFs
+  2022:      2 PDFs
+  2023:      0 PDFs
+  2024:      0 PDFs
+  2025:      0 PDFs
+----------------------------------------
+  TOTAL:     13 PDFs
+
+2. AN┴LISIS DE NOMBRES DE ARCHIVOS (10 muestras/a±o)
+----------------------------------------------------------------------
+  2019: Long.prom=16, Palabras.prom=1.0, Con cÚdula=100%
+  2020: Long.prom=27, Palabras.prom=1.7, Con cÚdula=100%
+  2021: Long.prom=24, Palabras.prom=2.7, Con cÚdula=67%
+  2022: Long.prom=34, Palabras.prom=1.5, Con cÚdula=100%
+
+3. EJEMPLOS DE NOMBRES POR AÐO
+----------------------------------------------------------------------
+
+  2007:
+
+  2010:
+
+  2011:
+
+  2012:
+
+  2013:
+
+  2014:
+
+  2015:
+
+  2016:
+
+  2017:
+
+  2018:
+
+  2019:
+    - 38239620_AVV.pdf
+    - 4981096.pdf
+    - 7185389_6-11-2019_JCR.pdf
+
+  2020:
+    - 79283205_26-11-2020_LDBG Firmada.pdf
+    - 79533338_26-06-2020-JCR.pdf
+    - 8.852.059_ 25_02_2020_LDBG.pdf
+
+  2021:
+    - 1094576163 FIRMADA.pdf
+    - 80547536_7-10-2021_LDBG.pdf
+    - LIBIA MAGALI DUQUE BRAVO firmada.pdf
+
+  2022:
+    - 15645354_31-01-2022_CERTIFICACION FIRMADA.pdf
+    - 23106127-04-05-2022_firmada.pdf
+
+  2023:
+
+  2024:
+
+  2025:
+
+4. AN┴LISIS DE CONTENIDO (2 muestras/a±o)
+----------------------------------------------------------------------
+
+  2007:
+
+  2010:
+
+  2011:
+
+  2012:
+
+  2013:
+
+  2014:
+
+  2015:
+
+  2016:
+
+  2017:
+
+  2018:
+
+  2019:
+    [NATIVO] 38239620_AVV.pdf...
+      Contiene: CERTIFICA=True, FUNCIONARIO=False, FECHA=False
+    [NATIVO] 19281771_29-07-2019.pdf...
+      Contiene: CERTIFICA=False, FUNCIONARIO=False, FECHA=False
+
+  2020:
+    [NATIVO] 79533338_26-06-2020-JCR.pdf...
+      Contiene: CERTIFICA=False, FUNCIONARIO=False, FECHA=False
+    [NATIVO] 8.852.059_ 25_02_2020_LDBG.pdf...
+      Contiene: CERTIFICA=False, FUNCIONARIO=False, FECHA=False
+
+  2021:
+    [NATIVO] 1094576163 FIRMADA.pdf...
+      Contiene: CERTIFICA=False, FUNCIONARIO=False, FECHA=False
+    [NATIVO] 80547536_7-10-2021_LDBG.pdf...
+      Contiene: CERTIFICA=False, FUNCIONARIO=False, FECHA=False
+
+  2022:
+    [NATIVO] 15645354_31-01-2022_CERTIFICACION FIRMAD...
+      Contiene: CERTIFICA=False, FUNCIONARIO=False, FECHA=False
+    [NATIVO] 23106127-04-05-2022_firmada.pdf...
+      Contiene: CERTIFICA=False, FUNCIONARIO=False, FECHA=False
+
+  2023:
+
+  2024:
+
+  2025:
+
+======================================================================
+AN┴LISIS COMPLETADO
+======================================================================

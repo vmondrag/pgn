@@ -1,0 +1,25 @@
+================================================================================
+LOG DE RESOLUCIONES NO PROCESADAS
+Generado: 2026-01-18 05:15:07
+================================================================================
+
+Total de archivos no procesados: 2
+
+
+================================================================================
+AÑO 2024 - 2 archivos no procesados
+================================================================================
+
+Archivo: RESOLUCION  030 DE  2024.pdf
+Ruta: C:\temp\PNG_CERTIFICADO_V3\Decretos\RESOLUCIONES 2024\RESOLUCION  030 DE  2024.pdf
+Output: C:\temp\PNG_CERTIFICADO_V3\output_res_2024
+Comando para procesar:
+  python extract_resoluciones.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\RESOLUCIONES 2024" --llm gpt-oss:120b-cloud --output "C:\temp\PNG_CERTIFICADO_V3\output_res_2024"
+--------------------------------------------------------------------------------
+
+Archivo: RESOLUCION  321 DE 30 DE SEPTIEMBRE DE 2024.pdf
+Ruta: C:\temp\PNG_CERTIFICADO_V3\Decretos\RESOLUCIONES 2024\RESOLUCION  321 DE 30 DE SEPTIEMBRE DE 2024.pdf
+Output: C:\temp\PNG_CERTIFICADO_V3\output_res_2024
+Comando para procesar:
+  python extract_resoluciones.py --dir-in "C:\temp\PNG_CERTIFICADO_V3\Decretos\RESOLUCIONES 2024" --llm gpt-oss:120b-cloud --output "C:\temp\PNG_CERTIFICADO_V3\output_res_2024"
+--------------------------------------------------------------------------------
